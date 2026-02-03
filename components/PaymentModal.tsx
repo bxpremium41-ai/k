@@ -140,6 +140,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <style>{`
+        @keyframes shine {
+          0% { left: -100%; }
+          100% { left: 200%; }
+        }
+        @keyframes pulse-soft {
+          0%, 100% { transform: scale(1); box-shadow: 0 20px 40px -12px rgba(16,185,129,0.4); }
+          50% { transform: scale(1.02); box-shadow: 0 25px 50px -12px rgba(16,185,129,0.6); }
+        }
+        .animate-pulse-soft {
+          animation: pulse-soft 2s infinite ease-in-out;
+        }
+      `}</style>
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
@@ -336,7 +349,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                               <div>
                                 <div className={`font-bold text-lg leading-tight ${isSelected ? 'text-brand-success' : 'text-gray-900'}`}>{plan.duration}</div>
                                 <div className="text-xs text-gray-500 font-medium mb-2">{plan.period}</div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600 text-left">
                                    <Users size={12} className="text-brand-success" />
                                    <span className="tabular-nums">{currentUsers.toLocaleString()}</span> students joined
                                 </div>
@@ -358,11 +371,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <Shield className="text-brand-success" size={20} />
-                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight">30-Day Risk-Free Guarantee</div>
+                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">30-Day Risk-Free Guarantee</div>
                         </div>
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <CreditCard className="text-blue-600" size={20} />
-                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight">SSL Secured Payments</div>
+                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">SSL Secured Payments</div>
                         </div>
                     </div>
                  </div>
@@ -410,7 +423,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                     )}
 
                     {step === 'PACKAGE_PREVIEW' && (
-                        <button onClick={() => setStep('PLANS')} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all shadow-glow-success hover:shadow-glow-success flex items-center justify-center gap-3 group text-xl uppercase tracking-widest">
+                        <button onClick={() => setStep('PLANS')} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all shadow-glow-success hover:shadow-glow-success flex items-center justify-center gap-3 group text-xl uppercase tracking-widest animate-pulse-soft">
                             Unlock the Bundle <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     )}
@@ -418,8 +431,34 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                     {step === 'PLANS' && (
                         <div className="w-full space-y-3">
                              {error && <p className="text-red-500 text-xs text-center bg-red-50 p-2 rounded animate-shake">{error}</p>}
-                             <button onClick={handlePaymentStart} disabled={isLoading} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-3 group shadow-glow-success disabled:opacity-70 disabled:cursor-not-allowed text-xl uppercase tracking-widest">
-                                {isLoading ? <><Loader2 className="animate-spin" size={24} /> Securing...</> : <><ShieldCheck size={22} /> Claim my Lifetime Access <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" /></>}
+                             <button 
+                                onClick={handlePaymentStart} 
+                                disabled={isLoading} 
+                                className="w-full relative overflow-hidden bg-[#10b981] hover:bg-[#059669] text-white py-4 rounded-2xl transition-all duration-300 shadow-[0_20px_40px_-12px_rgba(16,185,129,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(16,185,129,0.6)] hover:-translate-y-1 active:scale-95 flex items-center justify-between px-8 group disabled:opacity-70 disabled:cursor-not-allowed animate-pulse-soft"
+                             >
+                                {isLoading ? (
+                                    <div className="w-full flex items-center justify-center gap-3">
+                                        <Loader2 className="animate-spin" size={24} />
+                                        <span className="font-bold uppercase tracking-widest">Securing...</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="bg-white/20 p-2 rounded-full hidden sm:block shrink-0">
+                                            <ShieldCheck size={24} />
+                                        </div>
+                                        <div className="flex flex-col items-center sm:items-start flex-1 sm:ml-4 text-center sm:text-left">
+                                            <span className="text-2xl font-black uppercase tracking-tight leading-none">Download</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mt-1">All Courses + Software</span>
+                                        </div>
+                                        <div className="bg-white/20 p-2 rounded-full group-hover:translate-x-1 transition-transform shrink-0">
+                                            <ArrowRight size={24} />
+                                        </div>
+                                        {/* Shine effect */}
+                                        <div className="absolute inset-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none">
+                                            <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] group-hover:animate-[shine_1.5s_infinite]"></div>
+                                        </div>
+                                    </>
+                                )}
                              </button>
                         </div>
                     )}
