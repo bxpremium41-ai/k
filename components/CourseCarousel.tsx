@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { COURSES } from '../constants';
 import { GlassCard } from './ui/GlassCard';
 import { ArrowRight, ChevronLeft, ChevronRight, Star } from 'lucide-react';
@@ -9,6 +9,7 @@ interface CourseCarouselProps {
 
 export const CourseCarousel: React.FC<CourseCarouselProps> = ({ onBuyClick }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -20,6 +21,12 @@ export const CourseCarousel: React.FC<CourseCarouselProps> = ({ onBuyClick }) =>
       });
     }
   };
+
+  const handleError = (id: string) => {
+    setFailedImages(prev => ({ ...prev, [id]: true }));
+  };
+
+  const fallbackImage = "https://images.unsplash.com/photo-1518005052304-a37d996b0756?q=80&w=600&auto=format&fit=crop";
 
   return (
     <div className="relative py-8">
@@ -52,10 +59,11 @@ export const CourseCarousel: React.FC<CourseCarouselProps> = ({ onBuyClick }) =>
               hoverEffect={true}
             >
               {/* Image Section */}
-              <div className="h-48 overflow-hidden relative">
+              <div className="h-48 overflow-hidden relative bg-gray-800">
                 <div className={`absolute inset-0 bg-gradient-to-t ${course.color} opacity-20 z-10`} />
                 <img 
-                  src={course.imageUrl} 
+                  src={failedImages[course.id] ? fallbackImage : course.imageUrl} 
+                  onError={() => handleError(course.id)}
                   alt={course.title} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
