@@ -15,7 +15,7 @@ type Step = 'DETAILS' | 'PACKAGE_PREVIEW' | 'PLANS' | 'SUCCESS';
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, initialCourse }) => {
   const [step, setStep] = useState<Step>('PACKAGE_PREVIEW');
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>('lifetime-basic'); // Default to Best Value ($49)
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(PRICING_PLANS[0].id);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -24,7 +24,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
   
   // Timer & User Count State
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
-  const [userCounts, setUserCounts] = useState({ 'lifetime-basic': 23754, 'lifetime-plus': 17200 });
+  const [userCount, setUserCount] = useState(41258);
   const [viewingCount, setViewingCount] = useState(12);
 
   // Reset state when modal opens
@@ -47,7 +47,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
           }
           return prev + 1;
         });
-      }, 60); // Snappier animation
+      }, 50); // Fast, satisfying "sync"
       return () => clearInterval(interval);
     }
   }, [step, isOpen]);
@@ -75,10 +75,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
   // Live User Count Logic
   useEffect(() => {
     const interval = setInterval(() => {
-      setUserCounts(prev => ({
-        'lifetime-basic': prev['lifetime-basic'] + (Math.random() > 0.8 ? 1 : 0),
-        'lifetime-plus': prev['lifetime-plus'] + (Math.random() > 0.8 ? 1 : 0)
-      }));
+      setUserCount(prev => prev + (Math.random() > 0.8 ? 1 : 0));
       setViewingCount(prev => {
         const delta = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
         return Math.max(5, Math.min(25, prev + delta));
@@ -90,27 +87,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
   if (!isOpen) return null;
 
-  const handlePlanSelect = (id: string) => {
-    setSelectedPlanId(id);
-  };
-
   const handleDetailsContinue = () => {
     setStep('PACKAGE_PREVIEW');
   };
 
-  const selectedPlan = PRICING_PLANS.find(p => p.id === selectedPlanId);
+  const selectedPlan = PRICING_PLANS[0];
   const formatTime = (val: number) => val.toString().padStart(2, '0');
-
-  const handleRazorpaySuccess = (paymentId: string) => {
-    setIsLoading(false);
-    setStep('SUCCESS');
-    console.log("Transaction ID:", paymentId);
-  };
-
-  const handleRazorpayFailure = (error: any) => {
-    setIsLoading(false);
-    setError('Payment cancelled or failed. Please try again.');
-  };
 
   const handlePaymentStart = async () => {
     setError('');
@@ -118,18 +100,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
     setIsLoading(true);
 
     try {
-      if (selectedPlan.price === '$49') {
-         await submitPhoneNumber('', selectedPlan.id);
-         window.location.href = 'https://www.avada.space/checkout';
-         return;
-      }
-      if (selectedPlan.price === '$99') {
-         await submitPhoneNumber('', selectedPlan.id);
-         window.location.href = 'https://www.avada.space/checkout-now';
-         return;
-      }
       await submitPhoneNumber('', selectedPlan.id);
-      openRazorpayCheckout(selectedPlan, '', handleRazorpaySuccess, handleRazorpayFailure);
+      window.location.href = 'https://www.avada.space/checkout';
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
@@ -152,16 +124,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
         .animate-pulse-soft {
           animation: pulse-soft 2s infinite ease-in-out;
         }
+        .custom-scrollbar-thin::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar-thin::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+        .custom-scrollbar-thin::-webkit-scrollbar-thumb {
+          background: #10b981;
+          border-radius: 10px;
+        }
       `}</style>
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      {/* MODAL CONTAINER */}
-      <div className="relative w-full max-w-5xl bg-white border border-gray-200 rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out] flex flex-col md:flex-row h-full md:h-[650px] max-h-[90vh] text-gray-900">
+      <div className="relative w-full max-w-5xl bg-white border border-gray-200 rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out] flex flex-col md:flex-row h-full md:h-[700px] max-h-[95vh] text-gray-900">
         
-        {/* Close Button */}
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 z-50 p-2 bg-white/80 rounded-full text-gray-600 hover:text-black hover:bg-white transition-colors shadow-sm"
@@ -169,7 +149,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
           <X size={20} />
         </button>
 
-        {/* Left Side: Course Visuals */}
         <div className={`hidden md:flex md:w-1/3 bg-gray-900 p-8 flex-col justify-between relative overflow-hidden text-white`}>
            <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay transition-all duration-500" 
                 style={{ backgroundImage: `url(${step === 'DETAILS' && initialCourse ? initialCourse.imageUrl : 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop'})` }} 
@@ -194,7 +173,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
              )}
              
              <p className="text-gray-300 text-sm leading-relaxed font-light">
-                One-time investment. Lifetime career growth. join the professional community.
+                One-time investment. Lifetime access + future updates included.
              </p>
            </div>
            
@@ -203,18 +182,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
              <ul className="space-y-3">
                <li className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> 12+ Professional Courses</li>
                <li className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> Source Files Download</li>
-               <li className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> Official Certification</li>
+               <li className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> Lifetime Free Updates</li>
              </ul>
            </div>
         </div>
 
-        {/* Right Side: Content Area */}
         <div className="w-full md:w-2/3 flex flex-col h-full bg-white relative">
           
-          {/* SCROLLABLE CONTENT */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-0">
 
-            {/* STEP 1: PACKAGE PREVIEW */}
             {step === 'PACKAGE_PREVIEW' && (
               <div className="flex flex-col h-full">
                 <div className="mb-4">
@@ -228,32 +204,32 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                     )}
                     <div className="flex items-center gap-3 mb-1">
                         <IdCard size={28} className="text-brand-success shrink-0" />
-                        <h3 className="text-2xl font-bold font-display text-gray-900">Design Courses all Access Pass</h3>
+                        <h3 className="text-2xl font-bold font-display text-gray-900">Lifetime All-Access Pass</h3>
                     </div>
-                    <p className="text-gray-500 text-sm">Everything you need to master design, rendering, and AI.</p>
+                    <p className="text-gray-500 text-sm">One payment for every course and all future updates.</p>
                 </div>
                 
                 <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                         <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
                             <BookOpen size={14} className="text-brand-success"/> 
-                            {isBundleComplete ? '12 courses included' : `Syncing Library: ${addedCount}/${COURSES.length}`}
+                            {isBundleComplete ? 'All 12 Courses Ready' : `Syncing Library: ${addedCount}/${COURSES.length}`}
                         </h4>
                         {!isBundleComplete && <Loader2 size={14} className="animate-spin text-brand-success" />}
                     </div>
                     
-                    <div className="h-1.5 w-full bg-gray-100 rounded-full mb-4 overflow-hidden">
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full mb-6 overflow-hidden">
                        <div className="h-full bg-brand-success transition-all duration-300 ease-out" style={{ width: `${(addedCount / COURSES.length) * 100}%` }}></div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {COURSES.slice(0, addedCount).map((course) => (
-                            <div key={course.id} className="flex items-center gap-3 text-sm text-gray-700 bg-green-50/30 p-2 rounded-lg border border-green-100 animate-[fadeIn_0.3s_ease-out]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar-thin">
+                        {COURSES.map((course, idx) => (
+                            <div key={course.id} className={`flex items-center gap-3 text-sm text-gray-700 bg-green-50/30 p-2 rounded-lg border border-green-100 transition-all duration-300 ${idx < addedCount ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}>
                                  <div className="w-8 h-8 rounded overflow-hidden shrink-0 bg-gray-200">
                                      <img src={course.imageUrl} className="w-full h-full object-cover" alt={course.title} />
                                  </div>
                                  <div className="min-w-0 flex-1">
-                                    <div className="font-bold truncate text-[11px] uppercase tracking-tight">{course.title}</div>
+                                    <div className="font-bold truncate text-[10px] md:text-[11px] uppercase tracking-tight">{course.title}</div>
                                  </div>
                                  <Check size={14} className="ml-auto text-brand-success shrink-0" />
                             </div>
@@ -263,10 +239,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
                 <div className={`mb-6 bg-brand-success/5 p-4 rounded-xl border border-brand-success/10 transition-all duration-700 ${isBundleComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                      <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Gift size={14} className="text-brand-success"/> Free Bonus with Course Access
+                        <Gift size={14} className="text-brand-success"/> Exclusive Bonuses Included
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                         {["10,000+ Pro Textures", "Software Installation Help", "Portfolio Review", "Lifetime Updates"].map((item, i) => (
+                         {["All Future AI Courses Free", "10,000+ Pro Textures", "Lifetime Software Support", "Official Professional Certification"].map((item, i) => (
                              <div key={i} className="flex items-center gap-2 text-xs text-gray-800 font-medium">
                                 <div className="w-4 h-4 rounded-full bg-brand-success/10 flex items-center justify-center text-brand-success shrink-0"><Check size={10} strokeWidth={3} /></div>
                                 {item}
@@ -277,7 +253,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
               </div>
             )}
 
-            {/* STEP 2: COURSE DETAILS */}
             {step === 'DETAILS' && initialCourse && (
                 <div className="flex flex-col min-h-full pb-8 animate-[fadeIn_0.3s_ease-out]">
                      <div className="md:hidden w-full h-48 -mt-6 -mx-6 mb-6 relative overflow-hidden">
@@ -311,71 +286,64 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                 </div>
             )}
 
-             {/* STEP 3: PLANS */}
              {step === 'PLANS' && (
                  <div className="pb-8 animate-[fadeIn_0.3s_ease-out]">
                     <div className="flex items-center gap-2 mb-1">
                       <button onClick={() => setStep('PACKAGE_PREVIEW')} className="text-gray-400 hover:text-black mr-2 transition-colors">
                           <ArrowRight size={20} className="rotate-180" />
                       </button>
-                      <h3 className="text-2xl font-bold font-display text-gray-900">Choose your Access Level</h3>
+                      <h3 className="text-2xl font-bold font-display text-gray-900">Final Confirmation</h3>
                     </div>
                     
-                    {/* Urgency Badge */}
                     <div className="flex items-center gap-2 text-[11px] font-bold text-brand-success bg-green-50 px-3 py-1.5 rounded-full w-fit mb-6 border border-green-100">
                         <TrendingUp size={12} className="animate-bounce" />
-                        82% of students choose the "$49 BEST VALUE" plan
+                        Lifetime access for every single module.
                     </div>
                     
-                    <div className="space-y-3 mb-6">
-                      {PRICING_PLANS.map((plan) => {
-                        const isSelected = selectedPlanId === plan.id;
-                        const currentUsers = plan.id === 'lifetime-plus' ? userCounts['lifetime-plus'] : userCounts['lifetime-basic'];
-                        return (
-                          <div 
-                            key={plan.id}
-                            onClick={() => handlePlanSelect(plan.id)}
-                            className={`relative p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between group gap-4 sm:gap-0 ${isSelected ? `bg-green-50 border-brand-success shadow-glow-success ring-4 ring-brand-success/5` : 'bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50'}`}
-                          >
-                            {plan.label && (
-                              <div className={`absolute -top-3 right-6 px-4 py-1.5 text-[10px] font-bold uppercase rounded-full shadow-lg z-10 ${isSelected ? 'bg-brand-success text-white scale-110' : 'bg-gray-900 text-white'}`}>
-                                {plan.label}
-                              </div>
-                            )}
-                            <div className="flex items-center gap-4">
-                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? 'border-brand-success bg-brand-success' : 'border-gray-300'}`}>
-                                {isSelected && <Check size={14} className="text-white" strokeWidth={4} />}
-                              </div>
-                              <div>
-                                <div className={`font-bold text-lg leading-tight ${isSelected ? 'text-brand-success' : 'text-gray-900'}`}>{plan.duration}</div>
-                                <div className="text-xs text-gray-500 font-medium mb-2">{plan.period}</div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600 text-left">
-                                   <Users size={12} className="text-brand-success" />
-                                   <span className="tabular-nums">{currentUsers.toLocaleString()}</span> students joined
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right sm:text-right flex flex-row sm:flex-col justify-between items-center sm:items-end w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100 sm:border-none">
-                              <div className="text-sm text-gray-400 sm:hidden">Investment</div>
-                              <div>
-                                <div className="text-2xl font-bold font-display text-gray-900">{plan.price}</div>
-                                <div className="text-[10px] text-gray-400 line-through tracking-wide">{plan.originalPrice}</div>
-                              </div>
+                    <div className="mb-6">
+                      <div className="relative p-6 rounded-2xl border-2 bg-green-50 border-brand-success shadow-glow-success ring-4 ring-brand-success/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="absolute -top-3 right-6 px-4 py-1.5 text-[10px] font-bold uppercase rounded-full shadow-lg z-10 bg-brand-success text-white scale-110">
+                          BEST CHOICE
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="w-6 h-6 rounded-full border-2 border-brand-success bg-brand-success flex items-center justify-center shrink-0">
+                            <Check size={14} className="text-white" strokeWidth={4} />
+                          </div>
+                          <div>
+                            <div className="font-bold text-xl leading-tight text-brand-success">Full Access Bundle</div>
+                            <div className="text-xs text-gray-500 font-medium mb-2">Every Course + Secret Vault</div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600 text-left">
+                               <Users size={12} className="text-brand-success" />
+                               <span className="tabular-nums">{userCount.toLocaleString()}</span> professionals joined
                             </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                        <div className="text-right flex flex-row sm:flex-col justify-between items-center sm:items-end w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                          <div className="text-sm text-gray-400 sm:hidden">Investment</div>
+                          <div>
+                            <div className="text-3xl font-bold font-display text-gray-900">$49</div>
+                            <div className="text-[10px] text-gray-400 line-through tracking-wide text-right">$299</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Trust Indicators */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                        {PRICING_PLANS[0].features.map((feature, i) => (
+                            <div key={i} className="flex items-center gap-2 text-xs text-gray-600 font-bold">
+                                <Check size={14} className="text-brand-success" /> {feature}
+                            </div>
+                        ))}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <Shield className="text-brand-success" size={20} />
-                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">30-Day Risk-Free Guarantee</div>
+                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">Lifetime Guarantee</div>
                         </div>
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <CreditCard className="text-blue-600" size={20} />
-                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">SSL Secured Payments</div>
+                            <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">Secured Checkout</div>
                         </div>
                     </div>
                  </div>
@@ -385,18 +353,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                  <div className="h-full flex flex-col items-center justify-center text-center p-8">
                     <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-8 shadow-inner animate-bounce"><PartyPopper size={48} /></div>
                     <h3 className="text-4xl font-bold font-display mb-3 text-gray-900 tracking-tight">You're In!</h3>
-                    <p className="text-gray-500 max-w-xs mb-8 text-lg font-light leading-relaxed">Welcome to the inner circle. Your dashboard is ready.</p>
+                    <p className="text-gray-500 max-w-xs mb-8 text-lg font-light leading-relaxed">Welcome to the inner circle. Your lifetime access is active.</p>
                     <button onClick={onClose} className="w-full max-w-xs py-4 bg-brand-success text-white font-bold rounded-2xl hover:bg-emerald-600 transition-all hover:scale-105 shadow-xl uppercase tracking-widest text-sm">Start Learning Now</button>
                  </div>
              )}
           </div>
 
-          {/* FIXED FOOTER AREA - ALWAYS IN FRAME */}
           {(step === 'PACKAGE_PREVIEW' || step === 'PLANS' || step === 'DETAILS') && (
              <div className="p-5 border-t border-gray-100 bg-white z-20 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
                  <div className="flex flex-col gap-4">
                     
-                    {/* Synchronized Timer - SHOWN ON PACKAGE AND PLANS */}
                     {(step === 'PACKAGE_PREVIEW' || step === 'PLANS') && (
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                             <div className="flex items-center gap-2 bg-red-50 px-4 py-1.5 rounded-full border border-red-100">
@@ -411,7 +377,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                                 </div>
                             </div>
                             
-                            {/* Live Viewers count for urgency */}
                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-success opacity-75"></span>
@@ -424,7 +389,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
                     {step === 'PACKAGE_PREVIEW' && (
                         <button onClick={() => setStep('PLANS')} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all shadow-glow-success hover:shadow-glow-success flex items-center justify-center gap-3 group text-xl uppercase tracking-widest animate-pulse-soft">
-                            Unlock the Bundle <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                            Claim All 12 Courses for $49 <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     )}
 
@@ -447,13 +412,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                                             <ShieldCheck size={24} />
                                         </div>
                                         <div className="flex flex-col items-center sm:items-start flex-1 sm:ml-4 text-center sm:text-left">
-                                            <span className="text-2xl font-black uppercase tracking-tight leading-none">Download</span>
-                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mt-1">All Courses + Software</span>
+                                            <span className="text-2xl font-black uppercase tracking-tight leading-none">Complete Enrollment</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mt-1">Unlock 12 Courses + Full Asset Vault</span>
                                         </div>
                                         <div className="bg-white/20 p-2 rounded-full group-hover:translate-x-1 transition-transform shrink-0">
                                             <ArrowRight size={24} />
                                         </div>
-                                        {/* Shine effect */}
                                         <div className="absolute inset-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none">
                                             <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] group-hover:animate-[shine_1.5s_infinite]"></div>
                                         </div>
@@ -465,14 +429,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
                     {step === 'DETAILS' && (
                         <button onClick={handleDetailsContinue} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all shadow-glow-success flex items-center justify-center gap-3 group text-xl uppercase tracking-widest">
-                            Unlock This & 11 Other Courses <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                            Unlock Full Access for $49 <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     )}
                     
                     <div className="flex items-center justify-center gap-4 text-[10px] text-gray-400 font-medium">
-                        <div className="flex items-center gap-1"><Lock size={10} /> PCI Compliant</div>
+                        <div className="flex items-center gap-1"><Lock size={10} /> Secure Payments</div>
                         <div className="w-1 h-1 bg-gray-200 rounded-full"></div>
-                        <div className="flex items-center gap-1"><CheckCircle2 size={10} /> Instant Onboarding</div>
+                        <div className="flex items-center gap-1"><CheckCircle2 size={10} /> Lifetime Updates</div>
                     </div>
                  </div>
              </div>

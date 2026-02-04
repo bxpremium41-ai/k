@@ -200,14 +200,14 @@ export const COURSES = RAW_COURSES;
 
 export const ROWS = [
   { 
-    title: "Planning", 
+    title: "Step 1: Drafting & Planning", 
     courses: [
       COURSES.find(c => c.software === 'AutoCAD')!,
       COURSES.find(c => c.software === 'Revit')!
     ] 
   },
   { 
-    title: "Designing", 
+    title: "Step 2: Creative 3D Modeling", 
     courses: [
       COURSES.find(c => c.software === 'SketchUp')!,
       COURSES.find(c => c.software === '3ds Max')!,
@@ -215,7 +215,7 @@ export const ROWS = [
     ] 
   },
   { 
-    title: "Rendering", 
+    title: "Step 3: High-End Rendering", 
     courses: [
       COURSES.find(c => c.software === 'V-Ray')!,
       COURSES.find(c => c.software === 'Lumion')!,
@@ -224,7 +224,7 @@ export const ROWS = [
     ] 
   },
   { 
-    title: "AI & Interactive", 
+    title: "Step 4: AI Revolution & Games", 
     courses: [
       COURSES.find(c => c.software === 'Midjourney')!,
       COURSES.find(c => c.software === 'Stable Diffusion')!,
@@ -235,101 +235,87 @@ export const ROWS = [
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
-    id: 'lifetime-basic',
-    duration: 'Lifetime Access',
-    period: 'One-time payment',
+    id: 'lifetime-all-access',
+    duration: 'Lifetime All-Access',
+    period: 'One-time investment',
     price: '$49',
-    originalPrice: '$199',
+    originalPrice: '$299',
     label: 'BEST VALUE',
-    features: ['Access to all 12 courses', 'Project Files Included', 'Mobile Access', 'HD Quality', '24/7 Support'],
+    features: [
+      'Access to all 12 courses instantly', 
+      'Lifetime Future Updates included', 
+      'All Future AI Modules included',
+      'The Pro Asset Library (10,000+ items)', 
+      'Official Student ID & Certification',
+      'Direct Business Mentorship Access'
+    ],
     accentColor: 'border-brand-success shadow-glow-success'
-  },
-  {
-    id: 'lifetime-plus',
-    duration: 'Lifetime + Updates',
-    period: 'One-time payment',
-    price: '$99',
-    originalPrice: '$499',
-    label: 'PRO CHOICE',
-    features: ['Everything in Basic', 'All Future Course Updates', 'New AI Modules Free', 'Priority Mentor Chat', 'Official Certification'],
-    accentColor: 'border-gray-200'
   }
 ];
 
 export const FEATURES: Feature[] = [
   {
     icon: <Download className="w-8 h-8" />,
-    title: 'Download & Watch',
-    description: 'All software links provided. Learn offline.',
+    title: 'Instant Download',
+    description: 'Get all source files and project templates immediately.',
   },
   {
     icon: <Infinity className="w-8 h-8" />,
-    title: 'Unlimited Access',
-    description: 'Watch as much as you want, whenever you want.',
+    title: 'Zero Expiry',
+    description: 'Learn at your own pace. Your access never expires.',
   },
   {
     icon: <MonitorPlay className="w-8 h-8" />,
-    title: '100+ Hours',
-    description: 'From basics to advanced professional workflows.',
+    title: 'Elite Quality',
+    description: '4K lessons filmed in professional architecture studios.',
   },
   {
     icon: <LifeBuoy className="w-8 h-8" />,
-    title: '24/7 Support',
-    description: 'Direct chat support for technical doubts.',
-  },
-  {
-    icon: <Users className="w-8 h-8" />,
-    title: 'Community',
-    description: 'Join thousands of other architects.',
+    title: 'Personalized Support',
+    description: 'Got a bug? Our mentors reply in under 15 minutes.',
   }
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Sarah Jenkins',
-    role: 'Senior Architect',
+    role: 'Freelance Architect',
     location: 'London, UK',
-    content: 'I was skeptical about online courses, but the depth here is unmatched. The Revit workflow section alone saved our firm countless hours.'
+    content: 'Before this, I was charging $200 for a render. After applying the AI workflow, I just closed a $3,500 contract for a luxury penthouse tour.'
   },
   {
     name: 'Michael Chen',
-    role: '3D Visualizer',
+    role: 'Studio Founder',
     location: 'Toronto, Canada',
-    content: 'The V-Ray and 3ds Max combo is a game-changer. I went from producing average renders to photorealistic images.'
+    content: 'The D5 and Midjourney combo changed my firm’s output overnight. We are now delivering 3x faster without hiring more staff.'
+  },
+  {
+    name: 'Elena Rodriguez',
+    role: 'Student',
+    location: 'Madrid, Spain',
+    content: 'I learned more in 2 weeks here than 3 years in architecture school. The Revit modules are incredibly practical.'
   }
 ];
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    question: "How does the subscription work?",
-    answer: "Choose the Best Value plan ($49) for a one-time payment. You'll get instant, lifetime access to all 12 existing courses plus any AI modules we release this year. No monthly fees, ever."
+    question: "Is this really just a one-time payment?",
+    answer: "Yes. We hate monthly subscriptions as much as you do. You pay $49 once, and you own everything forever, including all the AI courses we release next month, next year, and beyond."
   },
   {
-    question: "Can I watch on mobile or tablet?",
-    answer: "Absolutely. Our platform is 100% mobile-responsive. You can stream lessons on your phone during commutes or on your tablet while practicing on your workstation."
+    question: "What if I'm a complete beginner?",
+    answer: "Perfect. We start with 'Level 0' basics for AutoCAD and SketchUp. Within 7 days, you'll be moving to the AI modules. Our system is built to take you from 'Zero to Studio-Ready' in 15 days."
   },
   {
-    question: "Is the software provided with the course?",
-    answer: "We provide direct links to official trials and student versions for all software used. We also include a special module on 'The Right Hardware' to ensure your computer can handle these heavy rendering tasks."
+    question: "Do I get certificates for my LinkedIn?",
+    answer: "Yes. You receive a verified certificate for each course path you complete, plus an 'Elite Full-Stack Master' diploma if you complete the entire library."
   },
   {
-    question: "Will I get a certificate upon completion?",
-    answer: "Yes. Every student who completes a course path receives a professional certificate from Avada Architectural AI. These are highly valued in the freelance market and by top architectural firms."
+    question: "What about software? Do you provide them?",
+    answer: "We provide official direct download links for all student versions and trials. We also have a 24/7 technical team that can hop on a call to help you install everything properly."
   },
   {
-    question: "What if I get stuck or have technical doubts?",
-    answer: "You are never alone. Our 24/7 Direct Chat Support is staffed by actual design professionals. Whether it's a software bug or a design challenge, we respond within minutes."
-  },
-  {
-    question: "Are the project files and assets included?",
-    answer: "Every single lesson comes with the exact project files, textures, and 3D families used in the video. You can follow along click-by-click with the same high-quality assets we use."
-  },
-  {
-    question: "Is this suitable for a complete beginner?",
-    answer: "Yes! We start with 'The Zero Hero' modules for AutoCAD and SketchUp that assume you've never opened the software before. We build up your skills until you're handling advanced AI-integrated workflows."
-  },
-  {
-    question: "How long do I have access to the materials?",
-    answer: "When you buy the bundle, you own it for life. There are no expiration dates. You can revisit the lessons anytime you need a refresher on a specific technique."
+    question: "What's the 30-Day Guarantee?",
+    answer: "If you watch the lessons and don't feel like your rendering skills have improved 10x, just message us. We'll give you a full refund, no questions asked. We're that confident in the system."
   }
 ];
