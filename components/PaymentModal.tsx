@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Lock, Check, ArrowRight, Loader2, ShieldCheck, PartyPopper, Star, Users, Zap, Timer, BookOpen, Gift, CheckCircle2, Shield, CreditCard, TrendingUp, IdCard } from 'lucide-react';
 import { submitPhoneNumber } from '../services/mockBackend';
-import { openRazorpayCheckout } from '../services/razorpay';
 import { PRICING_PLANS, COURSES } from '../constants';
 import { Course } from '../types';
 
@@ -11,16 +10,13 @@ interface PaymentModalProps {
   initialCourse?: Course | null;
 }
 
-type Step = 'DETAILS' | 'PACKAGE_PREVIEW' | 'PLANS' | 'SUCCESS';
+type Step = 'DETAILS' | 'PLANS' | 'SUCCESS';
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, initialCourse }) => {
-  const [step, setStep] = useState<Step>('PACKAGE_PREVIEW');
+  const [step, setStep] = useState<Step>('PLANS');
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(PRICING_PLANS[0].id);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Animation State for Bundle
-  const [addedCount, setAddedCount] = useState(0);
   
   // Timer & User Count State
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
@@ -30,27 +26,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setStep(initialCourse ? 'DETAILS' : 'PACKAGE_PREVIEW');
+      setStep(initialCourse ? 'DETAILS' : 'PLANS');
       setError('');
     }
   }, [isOpen, initialCourse]);
-
-  // Handle Bundle Animation
-  useEffect(() => {
-    if (step === 'PACKAGE_PREVIEW' && isOpen) {
-      setAddedCount(0);
-      const interval = setInterval(() => {
-        setAddedCount(prev => {
-          if (prev >= COURSES.length) {
-            clearInterval(interval);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 50); // Fast, satisfying "sync"
-      return () => clearInterval(interval);
-    }
-  }, [step, isOpen]);
 
   // Sync Timer Logic
   useEffect(() => {
@@ -88,7 +67,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
   if (!isOpen) return null;
 
   const handleDetailsContinue = () => {
-    setStep('PACKAGE_PREVIEW');
+    setStep('PLANS');
   };
 
   const selectedPlan = PRICING_PLANS[0];
@@ -101,14 +80,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
 
     try {
       await submitPhoneNumber('', selectedPlan.id);
-      window.location.href = 'https://www.avada.space/checkout';
+      window.location.href = 'https://buy.stripe.com/9B6aEXfCW2vX8pldXHfUQ0h';
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
     }
   };
-
-  const isBundleComplete = addedCount >= COURSES.length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -191,68 +168,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
           
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pb-0">
 
-            {step === 'PACKAGE_PREVIEW' && (
-              <div className="flex flex-col h-full">
-                <div className="mb-4">
-                    {initialCourse && (
-                         <div className="flex items-center gap-2 mb-2">
-                            <button onClick={() => setStep('DETAILS')} className="text-gray-400 hover:text-black transition-colors p-1 -ml-1">
-                                <ArrowRight size={16} className="rotate-180" />
-                            </button>
-                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Back</span>
-                         </div>
-                    )}
-                    <div className="flex items-center gap-3 mb-1">
-                        <IdCard size={28} className="text-brand-success shrink-0" />
-                        <h3 className="text-2xl font-bold font-display text-gray-900">Lifetime All-Access Pass</h3>
-                    </div>
-                    <p className="text-gray-500 text-sm">One payment for every course and all future updates.</p>
-                </div>
-                
-                <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
-                            <BookOpen size={14} className="text-brand-success"/> 
-                            {isBundleComplete ? 'All 12 Courses Ready' : `Syncing Library: ${addedCount}/${COURSES.length}`}
-                        </h4>
-                        {!isBundleComplete && <Loader2 size={14} className="animate-spin text-brand-success" />}
-                    </div>
-                    
-                    <div className="h-1.5 w-full bg-gray-100 rounded-full mb-6 overflow-hidden">
-                       <div className="h-full bg-brand-success transition-all duration-300 ease-out" style={{ width: `${(addedCount / COURSES.length) * 100}%` }}></div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar-thin">
-                        {COURSES.map((course, idx) => (
-                            <div key={course.id} className={`flex items-center gap-3 text-sm text-gray-700 bg-green-50/30 p-2 rounded-lg border border-green-100 transition-all duration-300 ${idx < addedCount ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}>
-                                 <div className="w-8 h-8 rounded overflow-hidden shrink-0 bg-gray-200">
-                                     <img src={course.imageUrl} className="w-full h-full object-cover" alt={course.title} />
-                                 </div>
-                                 <div className="min-w-0 flex-1">
-                                    <div className="font-bold truncate text-[10px] md:text-[11px] uppercase tracking-tight">{course.title}</div>
-                                 </div>
-                                 <Check size={14} className="ml-auto text-brand-success shrink-0" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className={`mb-6 bg-brand-success/5 p-4 rounded-xl border border-brand-success/10 transition-all duration-700 ${isBundleComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                     <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Gift size={14} className="text-brand-success"/> Exclusive Bonuses Included
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                         {["All Future AI Courses Free", "10,000+ Pro Textures", "Lifetime Software Support", "Official Professional Certification"].map((item, i) => (
-                             <div key={i} className="flex items-center gap-2 text-xs text-gray-800 font-medium">
-                                <div className="w-4 h-4 rounded-full bg-brand-success/10 flex items-center justify-center text-brand-success shrink-0"><Check size={10} strokeWidth={3} /></div>
-                                {item}
-                             </div>
-                         ))}
-                    </div>
-                </div>
-              </div>
-            )}
-
             {step === 'DETAILS' && initialCourse && (
                 <div className="flex flex-col min-h-full pb-8 animate-[fadeIn_0.3s_ease-out]">
                      <div className="md:hidden w-full h-48 -mt-6 -mx-6 mb-6 relative overflow-hidden">
@@ -287,12 +202,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
             )}
 
              {step === 'PLANS' && (
-                 <div className="pb-8 animate-[fadeIn_0.3s_ease-out]">
+                 <div className="pb-8 animate-[fadeIn_0.3s_ease-out] flex flex-col h-full">
                     <div className="flex items-center gap-2 mb-1">
-                      <button onClick={() => setStep('PACKAGE_PREVIEW')} className="text-gray-400 hover:text-black mr-2 transition-colors">
-                          <ArrowRight size={20} className="rotate-180" />
-                      </button>
-                      <h3 className="text-2xl font-bold font-display text-gray-900">Final Confirmation</h3>
+                      {initialCourse && (
+                        <button onClick={() => setStep('DETAILS')} className="text-gray-400 hover:text-black mr-2 transition-colors">
+                            <ArrowRight size={20} className="rotate-180" />
+                        </button>
+                      )}
+                      <h3 className="text-2xl font-bold font-display text-gray-900">Checkout</h3>
                     </div>
                     
                     <div className="flex items-center gap-2 text-[11px] font-bold text-brand-success bg-green-50 px-3 py-1.5 rounded-full w-fit mb-6 border border-green-100">
@@ -336,7 +253,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mt-6">
+                    <div className="grid grid-cols-2 gap-4 mt-auto mb-6">
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <Shield className="text-brand-success" size={20} />
                             <div className="text-[10px] text-gray-500 font-bold uppercase leading-tight text-left">Lifetime Guarantee</div>
@@ -359,11 +276,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
              )}
           </div>
 
-          {(step === 'PACKAGE_PREVIEW' || step === 'PLANS' || step === 'DETAILS') && (
+          {(step === 'PLANS' || step === 'DETAILS') && (
              <div className="p-5 border-t border-gray-100 bg-white z-20 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
                  <div className="flex flex-col gap-4">
                     
-                    {(step === 'PACKAGE_PREVIEW' || step === 'PLANS') && (
+                    {step === 'PLANS' && (
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                             <div className="flex items-center gap-2 bg-red-50 px-4 py-1.5 rounded-full border border-red-100">
                                 <Timer size={14} className="text-brand-primary animate-pulse" />
@@ -387,12 +304,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                         </div>
                     )}
 
-                    {step === 'PACKAGE_PREVIEW' && (
-                        <button onClick={() => setStep('PLANS')} className="w-full py-4 bg-brand-success hover:bg-emerald-600 text-white font-bold rounded-2xl transition-all shadow-glow-success hover:shadow-glow-success flex items-center justify-center gap-3 group text-xl uppercase tracking-widest animate-pulse-soft">
-                            Claim All 12 Courses for $49 <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    )}
-
                     {step === 'PLANS' && (
                         <div className="w-full space-y-3">
                              {error && <p className="text-red-500 text-xs text-center bg-red-50 p-2 rounded animate-shake">{error}</p>}
@@ -412,7 +323,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ini
                                             <ShieldCheck size={24} />
                                         </div>
                                         <div className="flex flex-col items-center sm:items-start flex-1 sm:ml-4 text-center sm:text-left">
-                                            <span className="text-2xl font-black uppercase tracking-tight leading-none">Complete Enrollment</span>
+                                            <span className="text-2xl font-black uppercase tracking-tight leading-none">Download Now</span>
                                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mt-1">Unlock 12 Courses + Full Asset Vault</span>
                                         </div>
                                         <div className="bg-white/20 p-2 rounded-full group-hover:translate-x-1 transition-transform shrink-0">
