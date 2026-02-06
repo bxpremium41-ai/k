@@ -13,7 +13,8 @@ import {
   ArrowDownCircle, Lock, Gem, BarChart3, HelpCircle, Users, GraduationCap, Building2, Lightbulb, ListChecks,
   Crown,
   ChevronRight,
-  Shield
+  Shield,
+  Radio
 } from 'lucide-react';
 import { Course } from './types';
 
@@ -181,19 +182,29 @@ const App: React.FC = () => {
           <div className="container mx-auto px-6 md:px-12 relative z-10">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="w-full lg:w-1/2 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-red-100 shadow-sm">
+                  <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-red-100 shadow-sm">
                      <Gem size={14} /> This is a revolution in the Design Industry
                   </div>
                   <h1 className="text-4xl md:text-7xl font-display font-bold leading-[1.1] mb-8 text-gray-900 tracking-tight">
-                    If you're still learning design software one YouTube video at a time, <span className="text-brand-primary italic">you're doing it the hard way.</span>
+                    If you're still learning design software and AI one YouTube video at a time, <span className="text-brand-primary italic">you're doing it the hard way.</span>
                   </h1>
-                  <div className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-12 leading-relaxed">
+                  <div className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-8 leading-relaxed">
                     <p className="mb-6">
                       In 2026, clients want <span className="text-gray-900 font-bold">speed, quality, and wow-worthy visuals.</span>
                     </p>
                     <p>
                       We’ll show you exactly how to deliver — with <span className="text-gray-900 font-bold underline decoration-brand-primary/30">SketchUp, V-Ray, Lumion, AutoCAD, and D5</span> — like a top-tier designer (even if you’re starting from zero).
                     </p>
+                  </div>
+
+                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-10">
+                      <div className="bg-gray-900 text-white px-5 py-2.5 rounded-full flex items-center gap-2.5 text-xs font-bold shadow-lg shadow-gray-200 border border-gray-700">
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                          </span>
+                          <span>New: Weekly Live AI Masterclasses included for Free!</span>
+                      </div>
                   </div>
                   
                   <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} />
@@ -268,7 +279,7 @@ const App: React.FC = () => {
                         <div className="absolute inset-0 bg-brand-primary/5 blur-[100px] rounded-full"></div>
                         <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] border-4 border-white bg-black relative">
                             <iframe 
-                                src="https://iframe.mediadelivery.net/embed/494628/a8b8b480-201f-4099-ac67-2a42b9a1b61c" 
+                                src="https://iframe.mediadelivery.net/embed/494628/a8b8b480-201f-4099-ac67-2a42b9a1b61c?muted=true" 
                                 className="w-full h-full object-cover" 
                                 allow="autoplay; fullscreen"
                                 loading="lazy"
@@ -420,14 +431,15 @@ const App: React.FC = () => {
                     <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tight">The Total Value</h2>
                     <p className="text-gray-500 text-xl font-medium max-w-2xl mx-auto">This isn't just a course. It's an entire design business downloaded to your computer.</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div className="flex flex-wrap justify-center gap-6 mb-16">
                     {[
                         { t: "12 Master Courses", d: "Lifetime access to every lesson.", v: "$1,499", i: <Rocket className="text-brand-primary" /> },
+                        { t: "Weekly Live AI Classes", d: "New AI workflows every week.", v: "$999", i: <Radio className="text-brand-primary" /> },
                         { t: "10,000+ Pro Textures", d: "4K resolution assets.", v: "$299", i: <Gem className="text-brand-primary" /> },
                         { t: "AI Prompt Library", d: "Copy-paste viral ideas.", v: "$199", i: <Sparkles className="text-brand-primary" /> },
                         { t: "Project Source Files", d: "Ready-to-use templates.", v: "$499", i: <Briefcase className="text-brand-primary" /> }
                     ].map((item, i) => (
-                        <div key={i} className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 flex flex-col items-center text-center">
+                        <div key={i} className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 flex flex-col items-center text-center w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)]">
                              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm">{item.i}</div>
                              <h4 className="font-bold text-lg mb-2">{item.t}</h4>
                              <p className="text-sm text-gray-500 mb-4">{item.d}</p>
