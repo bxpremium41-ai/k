@@ -1,0 +1,154 @@
+<!-- 
+  INSTRUCTIONS FOR SYSTEME.IO:
+  1. Add a "Raw HTML" element to your page.
+  2. Paste this entire code block into it.
+  3. Save and Preview.
+-->
+
+<!-- 1. Imports (Tailwind + Fonts) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+<!-- 2. Configuration & Styles -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Outfit', 'sans-serif'],
+          display: ['Space Grotesk', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            primary: '#D90429',
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Smooth fade transition */
+  .fade-transition {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  }
+  .fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<!-- 3. The Widget Layout -->
+<div class="w-full bg-white py-8 font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-4">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+       <h3 class="text-gray-400 font-bold uppercase tracking-widest text-xs md:text-sm">Included Masterclasses</h3>
+       <span class="bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] md:text-xs font-bold border border-gray-200">12 Courses</span>
+    </div>
+
+    <!-- Grid Container -->
+    <!-- Mobile: grid-cols-2 (2 per row) -->
+    <!-- Desktop: md:grid-cols-3 (3 per row) -->
+    <div id="course-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 fade-transition fade-in min-h-[280px]">
+       <!-- Courses will be injected here by JS -->
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div class="flex justify-center gap-2 mt-6">
+      <div id="dot-0" class="w-2 h-2 rounded-full bg-brand-primary transition-all duration-300"></div>
+      <div id="dot-1" class="w-2 h-2 rounded-full bg-gray-200 transition-all duration-300"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 4. Logic & Data -->
+<script>
+  (function() {
+    // --- DATA ---
+    const COURSES = [
+      { software: 'V-RAY', title: 'V-Ray Photorealism', img: 'https://lh3.googleusercontent.com/d/1aHEt_z78tYD_0Cn66DiduAnhwn-o8El8' },
+      { software: 'AUTOCAD', title: 'AutoCAD Mastery', img: 'https://lh3.googleusercontent.com/d/1fV5bz4JDugh8HxLMJ0fXu5K5sDj3qlSR' },
+      { software: 'REVIT', title: 'BIM with Revit', img: 'https://lh3.googleusercontent.com/d/1N_BbG9kAEwIk541Id53_RV0CWjO1jzAt' },
+      { software: 'SKETCHUP', title: 'SketchUp Pro', img: 'https://lh3.googleusercontent.com/d/1wl6by5AO5MiPeoYsZ8F6Zi5AJahoeTQo' },
+      { software: '3DS MAX', title: '3ds Max Advanced', img: 'https://lh3.googleusercontent.com/d/1DgmIvkeC2dxGpRpzbIthHQsSdlCty2Xg' },
+      { software: 'LUMION', title: 'Lumion Cinematic', img: 'https://lh3.googleusercontent.com/d/1XW2DDHVa1Qc15NcZ3wUKMFRT7LkyZMCt' },
+      { software: 'D5 RENDER', title: 'D5 Render Realtime', img: 'https://lh3.googleusercontent.com/d/1vbV4j6K9sgzbbZ7qlRdgqPTXWiHBPLsr' },
+      { software: 'ENSCAPE', title: 'Enscape VR', img: 'https://lh3.googleusercontent.com/d/1SmezP6LwT3yo9aE3oivpGkqS-xycSOyx' },
+      { software: 'MIDJOURNEY', title: 'AI Architecture', img: 'https://lh3.googleusercontent.com/d/1s-HzZVKpc9F92mLW2gMOPk0kVrKAqUIS' },
+      { software: 'STABLE DIFFUSION', title: 'Generative Design', img: 'https://lh3.googleusercontent.com/d/1xSzSjuL4imlbXwEYMwKw_vhuueDcFtHm' },
+      { software: 'UNREAL ENGINE', title: 'Unreal Engine 5', img: 'https://lh3.googleusercontent.com/d/14EfKoC7BfxXmYxd6t6qIE470yQaX0toW' },
+      { software: 'PHOTOSHOP', title: 'Post Production', img: 'https://lh3.googleusercontent.com/d/1FkzIhdu7K5JeRFq7BM1wGV5MND_fLMKe' }
+    ];
+
+    const gridEl = document.getElementById('course-grid');
+    const dot0 = document.getElementById('dot-0');
+    const dot1 = document.getElementById('dot-1');
+    let currentBatch = 0; // 0 or 1
+    const BATCH_SIZE = 6;
+
+    function renderBatch(batchIndex) {
+      // 1. Fade Out
+      gridEl.classList.remove('fade-in');
+      gridEl.classList.add('fade-out');
+
+      setTimeout(() => {
+        // 2. Swap Data
+        const start = batchIndex * BATCH_SIZE;
+        const end = start + BATCH_SIZE;
+        const batch = COURSES.slice(start, end);
+
+        let html = '';
+        batch.forEach(course => {
+          html += `
+            <div class="flex items-center gap-3 p-3 rounded-2xl border border-gray-100 bg-white hover:border-red-100 hover:shadow-lg transition-all duration-300 group cursor-default">
+                <!-- Image -->
+                <div class="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-xl bg-gray-100 overflow-hidden relative border border-gray-100">
+                    <img src="${course.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${course.title}">
+                </div>
+                <!-- Text -->
+                <div class="min-w-0 flex flex-col justify-center">
+                    <span class="text-[9px] md:text-[10px] font-bold text-brand-primary uppercase tracking-widest mb-0.5">${course.software}</span>
+                    <h4 class="text-xs md:text-sm font-bold text-gray-900 leading-tight truncate pr-2">${course.title}</h4>
+                </div>
+            </div>
+          `;
+        });
+        gridEl.innerHTML = html;
+
+        // 3. Update Dots
+        if(batchIndex === 0) {
+            dot0.classList.replace('bg-gray-200', 'bg-brand-primary');
+            dot1.classList.replace('bg-brand-primary', 'bg-gray-200');
+        } else {
+            dot1.classList.replace('bg-gray-200', 'bg-brand-primary');
+            dot0.classList.replace('bg-brand-primary', 'bg-gray-200');
+        }
+
+        // 4. Fade In
+        gridEl.classList.remove('fade-out');
+        gridEl.classList.add('fade-in');
+
+      }, 500); // Wait for fade out
+    }
+
+    // Initial Render
+    renderBatch(0);
+
+    // Loop
+    setInterval(() => {
+      currentBatch = currentBatch === 0 ? 1 : 0;
+      renderBatch(currentBatch);
+    }, 5000); // Change every 5 seconds
+
+  })();
+</script>
