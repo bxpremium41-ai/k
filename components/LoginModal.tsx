@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
+import { X, Mail, Lock, ArrowRight } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -63,28 +63,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                     Sign In <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
-
-            <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-100"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-gray-400 font-bold tracking-widest">Or continue with</span>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-                <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm font-bold text-gray-700">
-                     <Chrome size={18} /> Google
-                </button>
-                <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm font-bold text-gray-700">
-                     <Github size={18} /> GitHub
-                </button>
-            </div>
-
-             <div className="mt-6 text-center text-xs text-gray-500">
-                Don't have an account? <span className="text-brand-primary font-bold cursor-pointer hover:underline">Create one</span>
-             </div>
         </div>
       </div>
     </div>

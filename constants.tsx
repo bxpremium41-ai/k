@@ -15,21 +15,6 @@ import { Download, MonitorPlay, Infinity, LifeBuoy, Users } from 'lucide-react';
 
 const RAW_COURSES: Course[] = [
   {
-    id: '5',
-    title: 'V-Ray Photorealism',
-    software: 'V-Ray',
-    description: 'Make your 3D models look like real photos. Lighting and shadows so good, clients will think it is built.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1aHEt_z78tYD_0Cn66DiduAnhwn-o8El8',
-    color: 'from-yellow-500 to-orange-400',
-    students: '48k',
-    learningPoints: [
-      'Set up realistic sunlight and night lighting',
-      'Make materials look like real wood and glass',
-      'Take "photographs" of your 3D house'
-    ],
-    workflowImpact: 'Sell your design before it exists. Clients pay faster when they see exactly what they are getting.'
-  },
-  {
     id: '1',
     title: 'AutoCAD Mastery',
     software: 'AutoCAD',
@@ -43,21 +28,6 @@ const RAW_COURSES: Course[] = [
       'Use shortcuts to draw 10x faster than others'
     ],
     workflowImpact: 'Stop drawing by hand. Create professional blueprints that contractors can actually build from.'
-  },
-  {
-    id: '2',
-    title: 'BIM with Revit',
-    software: 'Revit',
-    description: 'Build the whole 3D building on your computer. It is smart—change a wall in 3D, and the floor plan updates automatically.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1N_BbG9kAEwIk541Id53_RV0CWjO1jzAt',
-    color: 'from-red-600 to-red-500',
-    students: '38k',
-    learningPoints: [
-      'Create 3D buildings with automatic floor plans',
-      'Calculate how many bricks and windows you need',
-      'Work on big projects with other team members'
-    ],
-    workflowImpact: 'Save days of work. You do not need to redraw plans when the design changes. The software does it for you.'
   },
   {
     id: '3',
@@ -75,19 +45,19 @@ const RAW_COURSES: Course[] = [
     workflowImpact: 'Impress clients instantly. Model their dream kitchen or bedroom in front of them in just minutes.'
   },
   {
-    id: '4',
-    title: '3ds Max Advanced',
-    software: '3ds Max',
-    description: 'Design fancy furniture and luxury interiors. Create soft sofas and curtains that look real enough to touch.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1DgmIvkeC2dxGpRpzbIthHQsSdlCty2Xg',
-    color: 'from-cyan-600 to-blue-500',
-    students: '22k',
+    id: '5',
+    title: 'V-Ray Photorealism',
+    software: 'V-Ray',
+    description: 'Make your 3D models look like real photos. Lighting and shadows so good, clients will think it is built.',
+    imageUrl: 'https://lh3.googleusercontent.com/d/1aHEt_z78tYD_0Cn66DiduAnhwn-o8El8',
+    color: 'from-yellow-500 to-orange-400',
+    students: '48k',
     learningPoints: [
-      'Model complex shapes like twisted towers',
-      'Create soft fabrics, pillows, and blankets',
-      'Design high-end luxury interior spaces'
+      'Set up realistic sunlight and night lighting',
+      'Make materials look like real wood and glass',
+      'Take "photographs" of your 3D house'
     ],
-    workflowImpact: 'Design things simpler software cannot handle. Charge more for premium, high-detail luxury designs.'
+    workflowImpact: 'Sell your design before it exists. Clients pay faster when they see exactly what they are getting.'
   },
   {
     id: '6',
@@ -120,79 +90,19 @@ const RAW_COURSES: Course[] = [
     workflowImpact: 'Design faster. Change the floor material and see how it looks instantly without waiting.'
   },
   {
-    id: '8',
-    title: 'Enscape VR',
-    software: 'Enscape',
-    description: 'Walk inside your design. Put on a VR headset and let your client stand in their new living room.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1SmezP6LwT3yo9aE3oivpGkqS-xycSOyx',
-    color: 'from-orange-500 to-red-500',
-    students: '25k',
-    learningPoints: [
-      'One-click to start walking inside your model',
-      'Send a web link so clients can walk around too',
-      'Use Virtual Reality (VR) to impress'
-    ],
-    workflowImpact: 'Spot mistakes early. Walking through the house virtually helps you fix issues before construction starts.'
-  },
-  {
     id: '9',
-    title: 'AI Architecture',
-    software: 'Midjourney',
-    description: 'Use AI to get 100 design ideas in 1 minute. Just type "modern villa by the beach" and see the magic.',
+    title: 'AI Architecture & Gen Design',
+    software: 'Midjourney + SD',
+    description: 'The ultimate AI workflow. Generate concepts in seconds with Midjourney and turn rough sketches into renders with Stable Diffusion.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1s-HzZVKpc9F92mLW2gMOPk0kVrKAqUIS',
     color: 'from-fuchsia-600 to-purple-600',
-    students: '60k',
+    students: '75k',
     learningPoints: [
-      'How to write text to get amazing house images',
-      'Create mood boards for clients instantly',
-      'Combine different styles (e.g., Classic + Modern)'
+      'Master Midjourney for instant high-end concepts',
+      'Turn rough sketches into realistic renders (Stable Diffusion)',
+      'Train your own AI models on your style'
     ],
     workflowImpact: 'Never run out of ideas. Let AI generate the creative concepts so you can focus on the details.'
-  },
-  {
-    id: '10',
-    title: 'Generative Design',
-    software: 'Stable Diffusion',
-    description: 'Turn a rough pencil sketch into a realistic building image using AI. It is like magic for architects.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1xSzSjuL4imlbXwEYMwKw_vhuueDcFtHm',
-    color: 'from-indigo-500 to-purple-500',
-    students: '15k',
-    learningPoints: [
-      'Turn hand sketches into realistic renders',
-      'Change specific parts of an image with AI',
-      'Install AI tools on your own computer'
-    ],
-    workflowImpact: 'Show a client a realistic picture during the first meeting, even if you only have a napkin sketch.'
-  },
-  {
-    id: '11',
-    title: 'Unreal Engine 5',
-    software: 'Unreal Engine',
-    description: 'Make your house design look like a high-end video game. Let clients open doors and turn on lights.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/14EfKoC7BfxXmYxd6t6qIE470yQaX0toW',
-    color: 'from-gray-600 to-gray-400',
-    students: '18k',
-    learningPoints: [
-      'Create interactive lights and doors',
-      'Make realistic fire, water, and wind',
-      'Package your design as a playable game'
-    ],
-    workflowImpact: 'Gamify your work. Give clients a controller and let them play inside their future home.'
-  },
-  {
-    id: '12',
-    title: 'Post Production',
-    software: 'Photoshop',
-    description: 'The final touch. Add real sky, birds, and happy people to your building pictures to make them sell.',
-    imageUrl: 'https://lh3.googleusercontent.com/d/1FkzIhdu7K5JeRFq7BM1wGV5MND_fLMKe',
-    color: 'from-blue-800 to-blue-600',
-    students: '72k',
-    learningPoints: [
-      'Fix lighting and colors easily',
-      'Add realistic people and trees',
-      'Make your portfolio look professional'
-    ],
-    workflowImpact: 'Make average 3D renders look like award-winning photography. This is how you win competitions.'
   }
 ];
 
@@ -200,35 +110,24 @@ export const COURSES = RAW_COURSES;
 
 export const ROWS = [
   { 
-    title: "Step 1: Drafting & Planning", 
+    title: "Essential Fundamentals", 
     courses: [
       COURSES.find(c => c.software === 'AutoCAD')!,
-      COURSES.find(c => c.software === 'Revit')!
+      COURSES.find(c => c.software === 'SketchUp')!
     ] 
   },
   { 
-    title: "Step 2: Creative 3D Modeling", 
-    courses: [
-      COURSES.find(c => c.software === 'SketchUp')!,
-      COURSES.find(c => c.software === '3ds Max')!,
-      COURSES.find(c => c.software === 'Photoshop')!
-    ] 
-  },
-  { 
-    title: "Step 3: High-End Rendering", 
+    title: "High-End Rendering", 
     courses: [
       COURSES.find(c => c.software === 'V-Ray')!,
       COURSES.find(c => c.software === 'Lumion')!,
-      COURSES.find(c => c.software === 'D5 Render')!,
-      COURSES.find(c => c.software === 'Enscape')!
+      COURSES.find(c => c.software === 'D5 Render')!
     ] 
   },
   { 
-    title: "Step 4: AI Revolution & Games", 
+    title: "The AI Revolution", 
     courses: [
-      COURSES.find(c => c.software === 'Midjourney')!,
-      COURSES.find(c => c.software === 'Stable Diffusion')!,
-      COURSES.find(c => c.software === 'Unreal Engine')!
+      COURSES.find(c => c.id === '9')! // Combined AI Course
     ] 
   }
 ];
@@ -239,10 +138,10 @@ export const PRICING_PLANS: PricingPlan[] = [
     duration: 'Lifetime All-Access',
     period: 'One-time investment',
     price: '$49',
-    originalPrice: '$299',
+    originalPrice: '$99',
     label: 'BEST VALUE',
     features: [
-      'Access to all 12 courses instantly', 
+      'Access to all 6 courses instantly', 
       'Lifetime Future Updates included', 
       'All Future AI Modules included',
       'The Pro Asset Library (10,000+ items)', 

@@ -163,7 +163,7 @@ const App: React.FC = () => {
       <nav className="w-full z-50 bg-white border-b border-gray-100 sticky top-0">
         <div className="bg-gray-900 text-white py-2 px-4 flex justify-center gap-6 text-[11px] font-bold uppercase tracking-widest">
           <div className="flex items-center gap-3">
-             <span className="text-gray-500 line-through">$299</span>
+             <span className="text-gray-500 line-through">$99</span>
              <span className="text-brand-success">$49 Lifetime Offer</span>
           </div>
         </div>
@@ -186,7 +186,7 @@ const App: React.FC = () => {
                      <Gem size={14} /> This is a revolution in the Design Industry
                   </div>
                   <h1 className="text-4xl md:text-7xl font-display font-bold leading-[1.1] mb-8 text-gray-900 tracking-tight">
-                    If you're still learning design software and AI one YouTube video at a time, <span className="text-brand-primary italic">you're doing it the hard way.</span>
+                    Learn Interior/Exterior Design to Render: <span className="text-brand-primary italic">5 Courses + AI</span>
                   </h1>
                   <div className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-8 leading-relaxed">
                     <p className="mb-6">
@@ -213,7 +213,7 @@ const App: React.FC = () => {
                    <div className="relative w-full aspect-video max-w-[700px]">
                         <div className="absolute inset-0 bg-brand-primary/10 blur-[120px] rounded-full animate-pulse"></div>
                         <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_60px_100px_rgba(0,0,0,0.2)] border-4 border-white bg-black relative">
-                             <iframe src="https://iframe.mediadelivery.net/embed/489113/562b87e6-4ac9-40b6-b343-479ada547387?autoplay=true&loop=true&muted=true" className="w-full h-full object-cover" allow="autoplay; fullscreen"></iframe>
+                             <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true" className="w-full h-full object-cover" allow="autoplay; fullscreen"></iframe>
                         </div>
                    </div>
               </div>
@@ -221,7 +221,124 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* SECTION 2: ALL-ACCESS PASS GRID */}
+        {/* SECTION 2: MENTOR GUIDANCE (MOVED UP) */}
+        <section className="py-24 bg-white border-b border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gray-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+            <div className="container mx-auto px-6 max-w-6xl relative z-10">
+                <div className="text-center mb-16">
+                    <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-blue-100">
+                        <Sparkles size={14} /> The Industry Shift
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tight">
+                        Design Smarter, <span className="text-brand-primary">Not Harder.</span>
+                    </h2>
+                    <p className="text-gray-500 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
+                        The old way of spending 12 hours on a single render is dead. <br className="hidden md:block" />
+                        See how mastering <span className="text-gray-900 font-bold">AI + Standard Tools</span> changes your daily life.
+                    </p>
+                </div>
+
+                <div className="flex flex-col lg:flex-row bg-white rounded-[2.5rem] overflow-hidden border border-gray-200 shadow-2xl shadow-gray-200/50">
+                    <div className="w-full lg:w-1/3 bg-gray-50 p-8 lg:p-10 flex flex-col gap-4 border-r border-gray-100">
+                        <button 
+                            onClick={() => setMentorTab('student')} 
+                            className={`flex items-center gap-4 p-5 rounded-2xl transition-all text-left duration-300 border ${
+                                mentorTab === 'student' 
+                                ? 'bg-white border-brand-primary/20 shadow-lg scale-[1.02]' 
+                                : 'bg-transparent border-transparent hover:bg-white hover:border-gray-200'
+                            }`}
+                        >
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                mentorTab === 'student' ? 'bg-brand-primary text-white' : 'bg-gray-200 text-gray-500'
+                            }`}>
+                                <GraduationCap size={22} />
+                            </div>
+                            <div>
+                                <h4 className={`font-bold text-base ${mentorTab === 'student' ? 'text-gray-900' : 'text-gray-500'}`}>The Student</h4>
+                                <p className="text-xs text-gray-400 font-medium">"I need a job."</p>
+                            </div>
+                        </button>
+                        <button 
+                            onClick={() => setMentorTab('pro')} 
+                            className={`flex items-center gap-4 p-5 rounded-2xl transition-all text-left duration-300 border ${
+                                mentorTab === 'pro' 
+                                ? 'bg-white border-brand-primary/20 shadow-lg scale-[1.02]' 
+                                : 'bg-transparent border-transparent hover:bg-white hover:border-gray-200'
+                            }`}
+                        >
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                mentorTab === 'pro' ? 'bg-brand-primary text-white' : 'bg-gray-200 text-gray-500'
+                            }`}>
+                                <Briefcase size={22} />
+                            </div>
+                            <div>
+                                <h4 className={`font-bold text-base ${mentorTab === 'pro' ? 'text-gray-900' : 'text-gray-500'}`}>The Professional</h4>
+                                <p className="text-xs text-gray-400 font-medium">"I need more time."</p>
+                            </div>
+                        </button>
+                    </div>
+                    <div className="flex-1 p-8 lg:p-16 relative bg-white">
+                        {mentorTab === 'student' ? (
+                            <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
+                                <div>
+                                    <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4">
+                                        Stop being a "Junior." Start as a <span className="text-brand-primary">Specialist.</span>
+                                    </h3>
+                                    <p className="text-gray-600 leading-relaxed">
+                                        Most graduates spend 2 years drawing bathroom tiles. You will walk into interviews with a portfolio of 
+                                        <span className="font-bold text-gray-900"> AI-generated skyscrapers and cinema-quality renders</span>. 
+                                        Firms don't hire you for your grades; they hire you for your speed.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
+                                            <CheckCircle2 size={16} className="text-green-500" /> Viral Portfolio
+                                        </div>
+                                        <p className="text-xs text-gray-500">Create complex designs in minutes using Midjourney.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
+                                            <CheckCircle2 size={16} className="text-green-500" /> Full Stack Skills
+                                        </div>
+                                        <p className="text-xs text-gray-500">AutoCAD, SketchUp, V-Ray, D5 - All included.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
+                                <div>
+                                    <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4">
+                                        Double your output. <span className="text-brand-primary">Half your hours.</span>
+                                    </h3>
+                                    <p className="text-gray-600 leading-relaxed">
+                                        You are likely undercharging because projects take too long. With our AI workflow, you can generate 
+                                        client concepts in <span className="font-bold text-gray-900">30 seconds</span> and finalize renders in real-time. 
+                                        Take on more clients without hiring more staff.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                     <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
+                                            <Zap size={16} className="text-yellow-500" /> Rapid Concepting
+                                        </div>
+                                        <p className="text-xs text-gray-500">Show clients 10 options in the first meeting.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
+                                            <Zap size={16} className="text-yellow-500" /> Real-Time Rendering
+                                        </div>
+                                        <p className="text-xs text-gray-500">Make changes live in front of the client with D5.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {/* SECTION 3: ALL-ACCESS PASS GRID */}
         <section className="py-24 bg-white relative border-b border-gray-100">
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="bg-[#FFFFFF] rounded-[3rem] p-8 md:p-16 border border-gray-100 shadow-[0_30px_100px_rgba(0,0,0,0.05)] flex flex-col lg:flex-row gap-16">
@@ -238,7 +355,7 @@ const App: React.FC = () => {
                         <div className="mt-auto bg-[#FDF2F2] p-8 rounded-[2rem] border border-[#FDECEC] relative overflow-hidden mb-10 lg:mb-0">
                              <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Total Combined Duration</h4>
                              <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-display font-black text-[#D90429]">140+</span>
+                                <span className="text-5xl font-display font-black text-[#D90429]">70+</span>
                                 <span className="text-2xl font-display font-bold text-gray-900">Hours</span>
                              </div>
                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Of Premium 4K Video Content</p>
@@ -299,7 +416,7 @@ const App: React.FC = () => {
             </div>
         </section>
 
-        {/* SECTION 3: REVERSE PSYCHOLOGY */}
+        {/* SECTION 4: REVERSE PSYCHOLOGY */}
         <section className="py-24 bg-white relative overflow-hidden border-b border-gray-100">
             <div className="container mx-auto px-6 max-w-4xl">
                 <div className="bg-red-50 rounded-[4rem] p-12 md:p-20 border-4 border-dashed border-red-200 text-center relative">
@@ -328,62 +445,6 @@ const App: React.FC = () => {
                     
                     <div className="pt-12 sm:pt-6">
                         <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="max-w-2xl" />
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* SECTION 4: MENTOR GUIDANCE SECTION */}
-        <section className="py-24 bg-white border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-6xl">
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
-                        <HelpCircle size={14} /> Let's Be Real For A Second
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tight">Is this package for you?</h2>
-                    <p className="text-gray-500 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-                        I know what you're thinking. "Is this another tutorial library?" <br className="hidden md:block" /> 
-                        <span className="text-gray-900 font-bold">No. It's a career insurance policy.</span> Let me show you how it fits your specific life right now.
-                    </p>
-                </div>
-
-                <div className="flex flex-col lg:flex-row bg-gray-50 rounded-[4rem] overflow-hidden border border-gray-100 shadow-xl">
-                    <div className="w-full lg:w-1/3 bg-gray-900 p-8 lg:p-12 flex flex-col gap-4">
-                        <button onClick={() => setMentorTab('student')} className={`flex items-center gap-4 p-6 rounded-3xl transition-all text-left ${mentorTab === 'student' ? 'bg-brand-primary text-white shadow-glow translate-x-2' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}>
-                            <div className={`p-3 rounded-2xl ${mentorTab === 'student' ? 'bg-white/20' : 'bg-gray-800'}`}><GraduationCap size={24} /></div>
-                            <div><h4 className="font-bold text-lg">The Hungry Student</h4><p className="text-xs opacity-60">"I want to be industry-ready."</p></div>
-                        </button>
-                        <button onClick={() => setMentorTab('pro')} className={`flex items-center gap-4 p-6 rounded-3xl transition-all text-left ${mentorTab === 'pro' ? 'bg-brand-primary text-white shadow-glow translate-x-2' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}>
-                            <div className={`p-3 rounded-2xl ${mentorTab === 'pro' ? 'bg-white/20' : 'bg-gray-800'}`}><Building2 size={24} /></div>
-                            <div><h4 className="font-bold text-lg">The Busy Professional</h4><p className="text-xs opacity-60">"I want to buy back my time."</p></div>
-                        </button>
-                    </div>
-                    <div className="flex-1 p-8 lg:p-16 relative">
-                        {mentorTab === 'student' ? (
-                            <div className="animate-[fadeIn_0.5s_ease-out] space-y-8">
-                                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 leading-tight">Skip the "Entry-Level" Trap and start as a <span className="italic underline decoration-brand-primary/30">Senior Specialist.</span></h3>
-                                <p className="text-gray-600 text-lg leading-relaxed">Architecture school teaches you history and theory, but it doesn't teach you how to win a $5,000 project. Students who use Avada aren't looking for internships; they're getting hired as "Lead Visualizers".</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                                    {[{ t: "Build a Viral Portfolio", d: "Use AI to create concepts that look like $100M projects." }, { t: "Master 12+ Tools", d: "From AutoCAD to Unreal Engine 5." }].map((item, i) => (
-                                        <div key={i} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm"><div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary shrink-0"><CheckCircle2 size={20} /></div><div><h5 className="font-bold text-gray-900 text-sm">{item.t}</h5><p className="text-xs text-gray-500">{item.d}</p></div></div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="animate-[fadeIn_0.5s_ease-out] space-y-8">
-                                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 leading-tight">Turn your 40-hour work week into <span className="italic underline decoration-brand-primary/30">10 hours of pure creative flow.</span></h3>
-                                <p className="text-gray-600 text-lg leading-relaxed">You're tired. You spend your weekends rendering. You're losing bids to younger firms using AI. Our Professional track focuses on speed and photorealism that kills the competition.</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                                    {[{ t: "AI Workflow Integration", d: "Reduce render times from 8 hours to 8 minutes." }, { t: "Cinema-Grade Quality", d: " walkthroughs that feel like movies." }].map((item, i) => (
-                                        <div key={i} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm"><div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary shrink-0"><Zap size={20} /></div><div><h5 className="font-bold text-gray-900 text-sm">{item.t}</h5><p className="text-xs text-gray-500">{item.d}</p></div></div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        <div className="mt-12 flex flex-col md:flex-row items-center gap-6 p-8 bg-white/50 border border-white rounded-[2rem] backdrop-blur-sm">
-                             <div className="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary shrink-0"><Lightbulb size={32} /></div>
-                             <div><p className="text-gray-900 font-bold italic">"This isn't just learning; it's an unfair advantage. Don't be the person still drawing lines by hand while others build empires."</p></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -433,7 +494,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap justify-center gap-6 mb-16">
                     {[
-                        { t: "12 Master Courses", d: "Lifetime access to every lesson.", v: "$1,499", i: <Rocket className="text-brand-primary" /> },
+                        { t: "6 Master Courses", d: "Lifetime access to every lesson.", v: "$1,499", i: <Rocket className="text-brand-primary" /> },
                         { t: "Weekly Live AI Classes", d: "New AI workflows every week.", v: "$999", i: <Radio className="text-brand-primary" /> },
                         { t: "10,000+ Pro Textures", d: "4K resolution assets.", v: "$299", i: <Gem className="text-brand-primary" /> },
                         { t: "AI Prompt Library", d: "Copy-paste viral ideas.", v: "$199", i: <Sparkles className="text-brand-primary" /> },

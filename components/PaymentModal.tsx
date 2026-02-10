@@ -1,8 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { X, Lock, Check, ArrowRight, Loader2, ShieldCheck, Zap, Timer, CheckCircle2, Shield, CreditCard, TrendingUp } from 'lucide-react';
-import { submitPhoneNumber } from '../services/mockBackend';
-import { PRICING_PLANS, COURSES } from '../constants';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Lock, Check, Loader2, Timer, CreditCard, Mail, ShieldCheck, AlertCircle, WifiOff, RefreshCcw, FileCheck, ChevronDown, ArrowRight, BookOpen, CheckCircle2, Download, Star, Trophy, Zap } from 'lucide-react';
 import { Course } from '../types';
+import { COURSES, PRICING_PLANS } from '../constants';
+import { submitPhoneNumber } from '../services/mockBackend';
+
+// --- CONFIGURATION ---
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51PRJCsGGsoQTkhyv6OrT4zvnaaB5Y0MSSkTXi0ytj33oygsfW3dcu6aOFa9q3dr2mXYTCJErnFQJcOcyuDAsQd4B00lIAdclbB"; 
+
+// --- BACKEND CONNECTION SETTINGS ---
+// Updated to point specifically to the intent creation endpoint defined in server.js
+const BACKEND_URL = "https://avaada.space/create-payment-intent";
+
+const PAYPAL_BUSINESS_EMAIL = "design@avada.in"; 
+const PAYPAL_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"; 
+
+declare global {
+  interface Window {
+    Stripe?: (key: string) => any;
+  }
+}
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -10,268 +26,576 @@ interface PaymentModalProps {
   initialCourse?: Course | null;
 }
 
-export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, initialCourse }) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
+  // --- STATE ---
+  const [viewState, setViewState] = useState<'LOADING' | 'FORM' | 'PROCESSING' | 'SUCCESS' | 'CONNECTION_ERROR'>('LOADING');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isStripeLoaded, setIsStripeLoaded] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({ h: 2, m: 14, s: 30 });
   
-  // Timer & User Count State
-  const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
-  const [userCount, setUserCount] = useState(41258);
-  const [viewingCount, setViewingCount] = useState(12);
+  const stripeRef = useRef<any>(null);
+  const elementsRef = useRef<any>(null);
 
-  const STRIPE_LINK = 'https://www.avada.space/join';
-
-  // Sync Timer Logic
+  // --- LIFECYCLE ---
   useEffect(() => {
-    const calculateTime = () => {
-      const DURATION = (2 * 60 * 60 * 1000) + (23 * 60 * 1000) + (49 * 1000);
-      const now = Date.now();
-      const remaining = DURATION - (now % DURATION);
-      setTimeLeft({
-        h: Math.floor((remaining / (1000 * 60 * 60)) % 24),
-        m: Math.floor((remaining / (1000 * 60)) % 60),
-        s: Math.floor((remaining / 1000) % 60)
-      });
-    };
-    const timerInterval = setInterval(calculateTime, 1000);
-    calculateTime();
-    return () => clearInterval(timerInterval);
-  }, []);
+    if (isOpen) {
+      resetModal();
+    }
+  }, [isOpen]);
 
-  // Live User Count Logic
+  const resetModal = () => {
+    setViewState('LOADING');
+    setPaymentMethod('card');
+    setEmail('');
+    setErrorMessage(null);
+    setIsStripeLoaded(false);
+    
+    // Clear refs to ensure clean re-initialization
+    stripeRef.current = null;
+    elementsRef.current = null;
+    
+    // Start with a brief loading spin, then move directly to form
+    setTimeout(() => {
+        setViewState('FORM');
+    }, 600);
+  };
+
+  // Timer countdown
   useEffect(() => {
-    const interval = setInterval(() => {
-      setUserCount(prev => prev + (Math.random() > 0.8 ? 1 : 0));
-      setViewingCount(prev => {
-        const delta = Math.floor(Math.random() * 3) - 1;
-        return Math.max(5, Math.min(25, prev + delta));
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+      if(!isOpen) return;
+      const timer = setInterval(() => {
+        setTimeLeft(prev => {
+             if (prev.s > 0) return { ...prev, s: prev.s - 1 };
+             if (prev.m > 0) return { ...prev, m: prev.m - 1, s: 59 };
+             return prev;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+  }, [isOpen]);
+
+  // Init Stripe UI when in FORM view (without Payment Intent)
+  useEffect(() => {
+    if (viewState === 'FORM' && !stripeRef.current && paymentMethod === 'card') {
+        initializeStripeUI();
+    }
+  }, [viewState, paymentMethod]);
+
+  const initializeStripeUI = async (retry = 0) => {
+    try {
+        // Dynamic Script Injection Check
+        if (!window.Stripe) {
+            if (!document.getElementById('stripe-js')) {
+                 const script = document.createElement('script');
+                 script.src = 'https://js.stripe.com/v3/';
+                 script.id = 'stripe-js';
+                 script.async = true;
+                 document.head.appendChild(script);
+            }
+            
+            // Retry loop
+            if (retry < 10) { 
+                setTimeout(() => initializeStripeUI(retry + 1), 500);
+            } else {
+                setErrorMessage("Unable to load secure card gateway. Please use PayPal.");
+                setPaymentMethod('paypal');
+            }
+            return;
+        }
+
+        if (stripeRef.current) return;
+
+        // Just initialize Stripe instance and Elements without Payment Intent
+        stripeRef.current = window.Stripe(STRIPE_PUBLISHABLE_KEY);
+        
+        elementsRef.current = stripeRef.current.elements({ 
+            mode: 'payment',
+            amount: 4900,
+            currency: 'usd',
+            paymentMethodTypes: ['card'],
+            appearance: {
+                theme: 'flat', 
+                labels: 'floating',
+                variables: { 
+                    fontFamily: '"Outfit", sans-serif',
+                    borderRadius: '12px', 
+                    colorPrimary: '#D90429', 
+                    colorBackground: '#ffffff',
+                    colorText: '#1f2937', 
+                    colorDanger: '#ef4444',
+                    spacingUnit: '4px',
+                    fontSizeBase: '15px',
+                    fontWeightNormal: '500', 
+                },
+                rules: {
+                    '.Input': { 
+                        border: '1px solid #e2e8f0',
+                        backgroundColor: '#f8fafc',
+                        paddingTop: '16px', 
+                        paddingBottom: '16px',
+                        paddingLeft: '16px',
+                        boxShadow: 'none',
+                        transition: 'all 0.2s ease',
+                    },
+                    '.Input:hover': {
+                        borderColor: '#cbd5e1',
+                        backgroundColor: '#ffffff',
+                    },
+                    '.Input:focus': { 
+                        border: '1px solid #D90429', 
+                        backgroundColor: '#ffffff',
+                        boxShadow: '0 0 0 4px rgba(217, 4, 41, 0.1)', 
+                    },
+                    '.Label': {
+                        fontWeight: '600',
+                        color: '#64748b', 
+                        fontSize: '12px',
+                        marginBottom: '6px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                    },
+                    '.Tab': {
+                        display: 'none',
+                    }
+                }
+            }
+        });
+        
+        const paymentElement = elementsRef.current.create("payment", { 
+            layout: {
+                type: 'tabs',
+                defaultCollapsed: false,
+            },
+            fields: { 
+                billingDetails: { 
+                    email: 'never',
+                    address: 'never' 
+                } 
+            },
+            paymentMethodOrder: ['card'],
+            wallets: { applePay: 'never', googlePay: 'never' }
+        });
+
+        // Wait a tick to ensure the DOM is ready
+        setTimeout(() => {
+             const mountPoint = document.getElementById("stripe-element-mount");
+             if(mountPoint) {
+                 paymentElement.mount("#stripe-element-mount");
+                 setIsStripeLoaded(true);
+             } else {
+                 // Try one more time
+                 setTimeout(() => {
+                      const mp = document.getElementById("stripe-element-mount");
+                      if(mp) {
+                          paymentElement.mount("#stripe-element-mount");
+                          setIsStripeLoaded(true);
+                      }
+                 }, 500);
+             }
+        }, 100);
+
+    } catch (err: any) {
+        console.error("Stripe UI Init Failed:", err);
+        setErrorMessage("Card gateway unavailable. Please try PayPal.");
+        setIsStripeLoaded(false);
+        setPaymentMethod('paypal');
+    }
+  };
+
+  const handlePaypalSubmit = (e: React.FormEvent) => {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        e.preventDefault();
+        setEmailError(true);
+        setErrorMessage("Please enter a valid email address first.");
+        return;
+      }
+      submitPhoneNumber(email, 'paypal-init');
+      setViewState('PROCESSING');
+  };
+
+  const handleCardPay = async () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setEmailError(true);
+        return;
+    }
+    
+    if (!stripeRef.current || !elementsRef.current) {
+        setErrorMessage("Payment system not ready. Please refresh the page.");
+        return;
+    }
+    
+    // Submit the Elements form first (REQUIRED for deferred payments)
+    const { error: submitError } = await elementsRef.current.submit();
+    if (submitError) {
+        setErrorMessage(submitError.message || "Payment validation failed");
+        return;
+    }
+    
+    setViewState('PROCESSING');
+    
+    try {
+        console.log(`Creating Payment Intent at: ${BACKEND_URL}`);
+        
+        // Attempt to Create Payment Intent
+        const res = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                items: [{ id: 'lifetime-bundle' }], 
+                email: email 
+            })
+        });
+
+        // Robust Content-Type checking
+        const contentType = res.headers.get("content-type");
+        
+        if (!res.ok) {
+            // Try to get text body for error details
+            const errorText = await res.text().catch(() => "No error details");
+            throw new Error(`Server Error (${res.status}): ${errorText.substring(0, 100)}`);
+        }
+
+        if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await res.text().catch(() => "");
+            console.error("Non-JSON response:", textResponse.substring(0, 200));
+            throw new Error(`Invalid server response. Expected JSON, got ${contentType || 'unknown type'}.`);
+        }
+
+        const { clientSecret, error: backendError } = await res.json();
+        
+        if (backendError) {
+            throw new Error(backendError);
+        }
+
+        if (!clientSecret) {
+            throw new Error("Backend did not return a Client Secret.");
+        }
+
+        const returnUrl = "https://architect.systeme.io/courses";
+        
+        const result = await stripeRef.current.confirmPayment({
+            elements: elementsRef.current,
+            confirmParams: { 
+                return_url: returnUrl, 
+                receipt_email: email, 
+                payment_method_data: { 
+                    billing_details: { 
+                        email: email,
+                        address: { 
+                            country: 'US',
+                            postal_code: '10001',
+                            state: 'NY',
+                            city: 'New York',
+                            line1: '1235 Sixth Ave'
+                        } 
+                    } 
+                } 
+            },
+            clientSecret: clientSecret,
+            redirect: 'if_required' 
+        });
+
+        if (result.error) {
+            setErrorMessage(result.error.message || "Payment Failed");
+            setViewState('FORM');
+        } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+            setViewState('SUCCESS');
+            submitPhoneNumber(email, 'card-success');
+            setTimeout(() => { window.location.href = "https://architect.systeme.io/courses"; }, 2000); 
+        }
+    } catch (err: any) {
+        console.error("Payment Error:", err);
+        setErrorMessage(err.message || "An unexpected error occurred connecting to the backend.");
+        setViewState('FORM');
+    }
+  };
 
   if (!isOpen) return null;
 
-  const handleDownloadNow = () => {
-    setIsLoading(true);
-    // Submit intent without waiting for it, to ensure the redirection happens immediately
-    // Browsers often block redirects inside async handlers if they take too long (user gesture timeout)
-    submitPhoneNumber('Direct Checkout', PRICING_PLANS[0].id);
-    
-    // Direct redirection
-    window.location.href = STRIPE_LINK;
-  };
-
-  const formatTime = (val: number) => val.toString().padStart(2, '0');
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <style>{`
-        @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
-        @keyframes pulse-soft {
-          0%, 100% { transform: scale(1); box-shadow: 0 20px 40px -12px rgba(16,185,129,0.4); }
-          50% { transform: scale(1.02); box-shadow: 0 25px 50px -12px rgba(16,185,129,0.6); }
-        }
-        .animate-pulse-soft { animation: pulse-soft 2s infinite ease-in-out; }
-        .custom-scrollbar-thin::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scrollbar-thin::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
-      `}</style>
-      
-      <div 
-        className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-md transition-opacity duration-300" onClick={onClose} />
 
-      <div className="relative w-full max-w-5xl bg-white border border-gray-200 rounded-[2.5rem] shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out] flex flex-col md:flex-row h-full md:h-[650px] max-h-[90vh] text-gray-900">
+      <div className="relative w-full max-w-[1000px] bg-white rounded-[30px] shadow-2xl overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[680px] animate-[popScale_0.3s_cubic-bezier(0.16,1,0.3,1)]">
         
-        <button 
-          onClick={onClose}
-          className="absolute top-6 right-6 z-50 p-2 bg-white/80 hover:bg-white rounded-full text-gray-400 hover:text-black transition-all shadow-sm border border-gray-100"
-        >
-          <X size={20} />
-        </button>
+        {/* SIDEBAR (Desktop: Dark & Premium) */}
+        <div className="hidden md:flex w-[42%] bg-gray-900 text-white p-10 flex-col justify-between relative overflow-hidden">
+            {/* Ambient Background */}
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-        {/* Side Panel: Context & Trust */}
-        <div className="hidden md:flex md:w-2/5 bg-gray-900 p-10 flex-col justify-between relative overflow-hidden text-white">
-           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-           <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/20 to-black/90"></div>
-           
-           <div className="relative z-10">
-             <div className="flex items-center gap-2 text-brand-success font-black text-xs uppercase tracking-[0.2em] mb-6">
-               <ShieldCheck size={18} /> Instant Lifetime Access
-             </div>
-             <h2 className="text-4xl font-display font-bold leading-[1.1] mb-6 text-white">
-               The Complete <br/>
-               <span className="text-brand-primary">Design Engine.</span>
-             </h2>
-             <p className="text-gray-400 text-sm leading-relaxed max-w-xs font-medium">
-                Unlock 12 mastercourses, 10k+ assets, and the secret AI workflow used by top firms globally.
-             </p>
-           </div>
-           
-           <div className="relative z-10 mt-auto">
-             <div className="flex items-center gap-4 mb-8">
-                <div className="flex -space-x-3">
-                    {[1,2,3,4].map(i => (
-                        <div key={i} className="w-10 h-10 rounded-full border-2 border-gray-900 overflow-hidden bg-gray-800">
-                            <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" />
+            <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-8 text-brand-primary bg-white/5 w-fit px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm">
+                    <Trophy size={14} className="text-yellow-400" /> <span className="text-[10px] font-bold uppercase tracking-widest text-white">Best Seller Package</span>
+                </div>
+                
+                <h2 className="text-3xl font-display font-bold leading-tight mb-2 tracking-tight">Lifetime <br/> All-Access Pass</h2>
+                <div className="text-sm font-medium text-gray-400 mb-8 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Access to everything forever.
+                </div>
+                
+                <div className="flex items-baseline gap-3 mb-8 pb-8 border-b border-white/10">
+                    <span className="text-5xl font-black text-white tracking-tighter">$49</span>
+                    <span className="text-xl text-gray-500 line-through font-medium">$99</span>
+                </div>
+                
+                <div className="space-y-5">
+                    {[
+                        'Lifetime Course Updates Included', 
+                        'All 6 Masterclasses (70+ Hours)', 
+                        'Weekly Live AI Sessions', 
+                        '10,000+ Asset Library Access'
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-3 text-sm font-medium text-gray-200">
+                            <div className="w-6 h-6 rounded-full bg-brand-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-primary/20">
+                                <Check size={14} strokeWidth={3} />
+                            </div>
+                            {item}
                         </div>
                     ))}
                 </div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight">
-                    <span className="text-white block">{userCount.toLocaleString()}+</span>
-                    Designers Joined
-                </div>
-             </div>
-             <div className="space-y-4 pt-6 border-t border-white/10">
-               <div className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> Master 12+ Pro Softwares</div>
-               <div className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> 4K Video Training Library</div>
-               <div className="flex items-center gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-brand-success" /> All Future Updates Free</div>
-             </div>
-           </div>
+            </div>
+
+            <div className="relative z-10 pt-6">
+                 <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                     <div className="flex gap-1 mb-2">
+                        {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-yellow-400 text-yellow-400" />)}
+                     </div>
+                     <p className="text-sm text-gray-300 italic mb-3">"I learned more in 3 days than 4 years of uni. The AI workflow is insanely fast."</p>
+                     <div className="flex items-center gap-2">
+                         <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-900 flex items-center justify-center text-xs font-bold">JD</div>
+                         <span className="text-xs font-bold text-white">James D., Architect</span>
+                     </div>
+                 </div>
+            </div>
         </div>
 
-        {/* Main Panel: Checkout Form */}
-        <div className="w-full md:w-3/5 flex flex-col h-full bg-white relative">
-          
-          {/* SCROLLABLE CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
-            <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-2xl md:text-3xl font-bold font-display text-gray-900 tracking-tight">Checkout</h3>
-                    <div className="flex items-center gap-2 text-[10px] font-black text-brand-success bg-green-50 px-3 py-1.5 rounded-full border border-green-100 uppercase tracking-widest whitespace-nowrap">
-                        <TrendingUp size={12} />
-                        One-Time Investment
+        {/* MAIN CONTENT */}
+        <div className="flex-1 bg-white flex flex-col relative h-full">
+            
+            {/* Header */}
+            <div className="px-8 py-5 border-b border-gray-100 flex items-center justify-between shrink-0 z-20 bg-white">
+                <div className="flex flex-col">
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="w-2 h-2 rounded-full bg-gray-200"></div>
+                        <div className="w-8 h-1.5 rounded-full bg-brand-primary"></div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Step 2 of 2</span>
                     </div>
+                    <h3 className="text-xl font-bold text-gray-900 tracking-tight">Secure Checkout</h3>
                 </div>
-                <p className="text-gray-500 font-medium leading-relaxed">Come Equal to top designers in world using AI.</p>
+                <button onClick={onClose} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-900 transition-colors"><X size={20} /></button>
             </div>
 
-            {/* Selected Plan Summary */}
-            <div className="relative p-6 rounded-[1.5rem] border-2 bg-gray-50 border-gray-100 mb-8 overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-50">
-                    <Zap size={40} className="text-gray-200" />
-                </div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-                    <div>
-                        <div className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] mb-2">Package Selected</div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-1">Lifetime All-Access Pass</h4>
-                        <div className="text-xs text-gray-500 font-medium">Everything we own, now and forever.</div>
-                    </div>
-                    <div className="text-left sm:text-right">
-                        <div className="text-3xl font-display font-black text-gray-900">$49</div>
-                        <div className="text-[10px] text-gray-400 line-through font-bold">$299.00</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* INCLUDED COURSES GRID */}
-            <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest">Included Masterclasses</h4>
-                    <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded">12 Courses</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                    {COURSES.map((course) => (
-                        <div key={course.id} className="flex items-center gap-3 p-2 rounded-xl border border-gray-100 bg-white hover:border-brand-primary/20 transition-colors group">
-                            <div className="w-12 h-12 shrink-0 rounded-lg bg-gray-100 overflow-hidden relative">
-                                <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            </div>
-                            <div className="min-w-0">
-                                <div className="text-[9px] font-bold text-brand-primary uppercase tracking-wider mb-0.5">{course.software}</div>
-                                <div className="text-[11px] font-bold text-gray-900 leading-tight truncate">{course.title}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Value Highlights */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 mb-24">
-                {[
-                    "No monthly subscriptions",
-                    "Certified curriculum",
-                    "15-Day project readiness",
-                    "AI workflow library"
-                ].map((text, i) => (
-                    <div key={i} className="flex items-center gap-3 text-xs md:text-sm text-gray-600 font-bold">
-                        <div className="w-4 h-4 rounded-full bg-brand-success/10 flex items-center justify-center shrink-0 text-brand-success"><Check size={10} strokeWidth={3} /></div>
-                        {text}
-                    </div>
-                ))}
-            </div>
-          </div>
-
-          {/* FIXED BOTTOM SECTION (Always in Viewport) */}
-          <div className="p-6 border-t border-gray-100 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-20 relative">
-            <div className="space-y-4">
-                <button 
-                    onClick={handleDownloadNow} 
-                    disabled={isLoading} 
-                    className="w-full relative overflow-hidden bg-[#10b981] hover:bg-[#059669] text-white py-5 rounded-xl transition-all duration-300 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.3)] hover:shadow-[0_30px_60px_-10px_rgba(16,185,129,0.5)] hover:-translate-y-1 active:scale-95 flex items-center justify-between px-6 group disabled:opacity-70 disabled:cursor-not-allowed animate-pulse-soft"
-                >
-                    {isLoading ? (
-                        <div className="w-full flex items-center justify-center gap-3">
-                            <Loader2 className="animate-spin" size={20} />
-                            <span className="text-lg font-black uppercase tracking-widest">Opening Link...</span>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="flex flex-col items-start">
-                                <span className="text-xl font-black uppercase tracking-tight leading-none">Download Now</span>
-                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-80 mt-1">Direct Secure Checkout</span>
-                            </div>
-                            <div className="bg-white/20 p-2 rounded-full group-hover:translate-x-2 transition-transform shrink-0">
-                                <ArrowRight size={20} />
-                            </div>
-                            <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl pointer-events-none">
-                                <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-25deg] group-hover:animate-[shine_1.5s_infinite]"></div>
-                            </div>
-                        </>
-                    )}
-                </button>
+            {/* Scrollable Form Area */}
+            <div className="flex-1 px-8 py-6 overflow-y-auto custom-scrollbar">
                 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                        <div className="flex items-center gap-1.5">
-                           <Shield size={12} className="text-brand-success" /> Trusted Pay
+                {viewState === 'LOADING' && (
+                    <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-brand-primary/20 rounded-full blur-xl animate-pulse"></div>
+                            <Loader2 className="relative animate-spin text-brand-primary" size={48} />
                         </div>
-                        <div className="flex items-center gap-1.5">
-                           <CreditCard size={12} className="text-blue-500" /> Secure SSL
+                        <div>
+                            <h4 className="text-lg font-bold text-gray-900">Securing Connection...</h4>
+                            <p className="text-sm text-gray-400 mt-2 font-medium">Encrypting your session</p>
                         </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
-                        <Timer size={12} className="text-brand-primary animate-pulse" />
-                        <div className="flex items-center gap-1 text-xs font-black font-mono text-brand-primary tabular-nums">
-                            <span>{formatTime(timeLeft.h)}</span>
-                            <span className="text-red-200">:</span>
-                            <span>{formatTime(timeLeft.m)}</span>
-                            <span className="text-red-200">:</span>
-                            <span>{formatTime(timeLeft.s)}</span>
+                )}
+
+                {viewState === 'CONNECTION_ERROR' && (
+                    <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-2"><WifiOff size={28} /></div>
+                        <div>
+                            <h4 className="text-xl font-bold text-gray-900">Connection Failed</h4>
+                            <p className="text-sm text-gray-500 mt-2">Cannot reach payment gateway</p>
                         </div>
+                        <button onClick={() => { setViewState('LOADING'); resetModal(); }} className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold text-sm flex items-center gap-2">
+                            <RefreshCcw size={16} /> Retry
+                        </button>
+                    </div>
+                )}
+
+                {(viewState === 'FORM' || viewState === 'PROCESSING') && (
+                    <div className="space-y-6 animate-[fadeIn_0.5s_ease-out]">
+                        
+                        {/* Summary Block */}
+                        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                             <div className="flex items-center justify-between mb-4">
+                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Order Summary</span>
+                                 <div className="flex items-center gap-1.5 text-xs font-medium text-brand-primary bg-brand-primary/5 px-2 py-1 rounded">
+                                     <Timer size={12} className="animate-pulse" />
+                                     Offer expires in {timeLeft.m}:{timeLeft.s.toString().padStart(2,'0')}
+                                 </div>
+                             </div>
+                             
+                             {/* Mini Course Stack Grid */}
+                             <div className="grid grid-cols-2 gap-2 mb-4">
+                                {COURSES.map((c) => (
+                                    <div key={c.id} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-100 shadow-sm">
+                                        <div className="w-8 h-8 rounded-md bg-gray-200 overflow-hidden shrink-0">
+                                            <img src={c.imageUrl} className="w-full h-full object-cover" alt={c.title} />
+                                        </div>
+                                        <div className="flex flex-col min-w-0">
+                                             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider leading-none mb-0.5">{c.software}</span>
+                                             <span className="text-[10px] font-bold text-gray-900 leading-tight truncate">{c.title}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                             </div>
+
+                             <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                                 <div className="text-sm font-medium text-gray-500">Total Value</div>
+                                 <div className="text-sm font-medium text-gray-400 line-through">$99.00</div>
+                             </div>
+                             <div className="flex items-center justify-between mt-1">
+                                 <div className="text-sm font-bold text-gray-900">Today's Total</div>
+                                 <div className="text-xl font-black text-gray-900">$49.00</div>
+                             </div>
+                        </div>
+
+                        {/* Payment Method Toggle */}
+                        <div className="space-y-3">
+                            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 ml-1 block">Select Payment Method</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button 
+                                    onClick={() => setPaymentMethod('card')} 
+                                    className={`relative flex items-center justify-center gap-2 py-4 rounded-xl border-2 transition-all duration-200 whitespace-nowrap ${paymentMethod === 'card' ? 'bg-white border-[#0A2540] text-[#0A2540] shadow-sm' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}
+                                >
+                                    <CreditCard size={18} />
+                                    <span className="text-sm font-bold">Card</span>
+                                    {paymentMethod === 'card' && (
+                                        <div className="absolute top-[-8px] right-[-8px] bg-[#0A2540] text-white p-1 rounded-full"><Check size={10} strokeWidth={4} /></div>
+                                    )}
+                                </button>
+                                
+                                <button 
+                                    onClick={() => setPaymentMethod('paypal')} 
+                                    className={`relative flex items-center justify-center gap-2 py-4 rounded-xl border-2 transition-all duration-200 whitespace-nowrap ${paymentMethod === 'paypal' ? 'bg-[#f6f9fc] border-[#0070ba] text-[#0070ba] shadow-sm' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}
+                                >
+                                    <img src={PAYPAL_LOGO_URL} alt="PayPal" className="h-5 object-contain" />
+                                    {paymentMethod === 'paypal' && (
+                                        <div className="absolute top-[-8px] right-[-8px] bg-[#0070ba] text-white p-1 rounded-full"><Check size={10} strokeWidth={4} /></div>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Email Input */}
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 ml-1">Email Address</label>
+                            <div className="relative group transition-all duration-300">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Mail className={`h-4 w-4 transition-colors ${emailError ? 'text-red-400' : 'text-gray-400 group-focus-within:text-brand-primary'}`} />
+                                </div>
+                                <input 
+                                    type="email" 
+                                    value={email}
+                                    onChange={(e) => { setEmail(e.target.value); setEmailError(false); }}
+                                    placeholder="name@example.com"
+                                    className={`
+                                        block w-full pl-11 pr-4 py-4
+                                        bg-gray-50 border-2 text-sm font-semibold rounded-xl
+                                        placeholder:text-gray-400 text-gray-900
+                                        transition-all duration-200 ease-in-out
+                                        focus:outline-none focus:bg-white
+                                        ${emailError 
+                                            ? 'border-red-300 bg-red-50/50 focus:border-red-300' 
+                                            : 'border-gray-100 hover:border-gray-200 focus:border-brand-primary focus:shadow-[0_0_0_4px_rgba(217,4,41,0.1)]'
+                                        }
+                                    `}
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-400 px-1">We'll send your login details here instantly.</p>
+                        </div>
+
+                        {/* Stripe Element */}
+                        <div className={`${paymentMethod === 'card' ? 'block' : 'hidden'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                            <div className="min-h-[160px]">
+                                <div id="stripe-element-mount"></div>
+                            </div>
+                        </div>
+
+                        {/* PayPal View */}
+                        <div className={`${paymentMethod === 'paypal' ? 'block' : 'hidden'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                            <div className="bg-[#0070ba]/5 border border-[#0070ba]/10 rounded-xl p-6 text-center">
+                                <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm mx-auto mb-4 p-3 border border-gray-100">
+                                    <img src={PAYPAL_LOGO_URL} alt="PayPal" className="w-full h-full object-contain" />
+                                </div>
+                                <h4 className="font-bold text-gray-900 text-sm mb-1">Pay with PayPal</h4>
+                                <p className="text-xs text-gray-500 mb-6 max-w-[200px] mx-auto leading-relaxed">Secure, fast checkout using your PayPal account.</p>
+                                
+                                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" onSubmit={handlePaypalSubmit}>
+                                    <input type="hidden" name="cmd" value="_xclick" />
+                                    <input type="hidden" name="business" value={PAYPAL_BUSINESS_EMAIL} />
+                                    <input type="hidden" name="item_name" value="Avada Design Bundle" />
+                                    <input type="hidden" name="amount" value="49" />
+                                    <input type="hidden" name="currency_code" value="USD" />
+                                    {/* SUCCESS REDIRECT LINK (PayPal) */}
+                                    <input type="hidden" name="return" value="https://architect.systeme.io/courses" />
+                                    <input type="hidden" name="email" value={email} />
+                                    <button type="submit" className="w-full py-4 bg-[#0070ba] text-white rounded-xl font-bold uppercase tracking-widest hover:bg-[#005ea6] transition-all shadow-lg shadow-blue-900/10 flex items-center justify-center gap-2 group text-xs">
+                                        Proceed to PayPal <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        {errorMessage && (
+                            <div className="p-3 bg-red-50 text-red-600 rounded-xl text-xs font-bold flex items-center gap-3 animate-in fade-in border border-red-100">
+                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                                    <AlertCircle size={14} />
+                                </div>
+                                {errorMessage}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {viewState === 'SUCCESS' && (
+                    <div className="h-full flex flex-col items-center justify-center text-center">
+                        <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-xl shadow-green-500/20 mb-6 animate-[popScale_0.5s]"><Check size={40} className="text-white" strokeWidth={4} /></div>
+                        <h3 className="text-2xl font-display font-black text-gray-900 mb-2">Payment Successful</h3>
+                        <p className="text-gray-500 font-medium text-sm">Redirecting to your library...</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Footer Button: Fixed at bottom */}
+            {(viewState === 'FORM' || viewState === 'PROCESSING') && paymentMethod === 'card' && (
+                <div className="p-8 border-t border-gray-100 bg-white shrink-0 z-20 pb-8">
+                    <button
+                        onClick={handleCardPay}
+                        disabled={viewState === 'PROCESSING'}
+                        className="w-full py-4 bg-[#10B981] hover:bg-[#059669] text-white rounded-xl font-black text-lg uppercase tracking-widest shadow-[0_10px_25px_-5px_rgba(16,185,129,0.4)] hover:shadow-[0_20px_35px_-5px_rgba(16,185,129,0.5)] border border-transparent hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
+                    >
+                        {viewState === 'PROCESSING' ? (
+                            <Loader2 className="animate-spin relative z-10" />
+                        ) : (
+                            <>
+                                <Lock size={18} className="relative z-10 opacity-80" strokeWidth={2.5} />
+                                <span className="relative z-10">Enroll Now • $49</span> 
+                                <ArrowRight size={18} className="relative z-10 opacity-80 group-hover:translate-x-1 transition-transform" strokeWidth={2.5} />
+                            </>
+                        )}
+                    </button>
+                    <div className="flex items-center justify-center gap-4 mt-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                         {/* Simple text representation of cards for performance/simplicity */}
+                         <div className="flex gap-2">
+                            <div className="h-4 bg-gray-200 w-8 rounded"></div>
+                            <div className="h-4 bg-gray-200 w-8 rounded"></div>
+                            <div className="h-4 bg-gray-200 w-8 rounded"></div>
+                            <div className="h-4 bg-gray-200 w-8 rounded"></div>
+                         </div>
+                         <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1">
+                             <ShieldCheck size={10} /> 256-Bit SSL Encrypted
+                         </div>
                     </div>
                 </div>
-            </div>
-          </div>
+            )}
         </div>
       </div>
     </div>
   );
 };
-
-const Check = ({ size, strokeWidth, className }: { size: number, strokeWidth?: number, className?: string }) => (
-    <svg 
-        width={size} 
-        height={size} 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth={strokeWidth || 2} 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        className={className}
-    >
-        <polyline points="20 6 9 17 4 12" />
-    </svg>
-);
