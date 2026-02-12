@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { Play, Lock, ImageOff } from 'lucide-react';

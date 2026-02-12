@@ -43,7 +43,7 @@ const MasterCTA: React.FC<MasterCTAProps> = ({ onClick, timeLeft, className = ""
   const formatTime = (val: number) => val.toString().padStart(2, '0');
   
   return (
-    <div className={`flex flex-col items-center gap-4 w-full max-w-xl mx-auto lg:mx-0 ${className}`}>
+    <div className={`flex flex-col items-center gap-4 w-full max-w-xl mx-auto ${className}`}>
       <div className="flex items-end justify-between w-full px-2 mb-1">
         <div className="flex flex-col items-start">
            <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
@@ -55,7 +55,7 @@ const MasterCTA: React.FC<MasterCTAProps> = ({ onClick, timeLeft, className = ""
            </div>
         </div>
         <div className="flex flex-col items-end">
-           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-red-600 mb-1">
+           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-brand-primary mb-1">
               Final batch discount ends:
            </div>
            <div className="flex items-center gap-1.5 font-mono font-bold text-xl sm:text-2xl tabular-nums text-gray-800">
@@ -70,7 +70,7 @@ const MasterCTA: React.FC<MasterCTAProps> = ({ onClick, timeLeft, className = ""
 
       <button 
         onClick={onClick} 
-        className="group relative w-full bg-brand-primary hover:bg-gray-900 text-white py-6 sm:py-7 px-4 sm:px-12 rounded-2xl transition-all duration-500 shadow-[0_30px_60px_-15px_rgba(217,4,41,0.25)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] hover:-translate-y-1 active:scale-[0.98] overflow-hidden border border-white/20"
+        className="group relative w-full bg-brand-primary hover:bg-gray-900 text-white py-6 sm:py-7 px-4 sm:px-12 rounded-2xl transition-all duration-500 shadow-[0_30px_60px_-15px_rgba(5,150,105,0.25)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] hover:-translate-y-1 active:scale-[0.98] overflow-hidden border border-white/20"
       >
         <div className="relative z-10 flex items-center justify-center gap-2 sm:gap-5">
            <span className="text-sm sm:text-xl font-black uppercase tracking-tight whitespace-nowrap">All Courses + AI Bundle</span>
@@ -84,7 +84,7 @@ const MasterCTA: React.FC<MasterCTAProps> = ({ onClick, timeLeft, className = ""
       </button>
 
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-         <div className="flex items-center gap-1.5"><Star size={12} className="text-yellow-500 fill-yellow-500" /> 4.9/5 Rating</div>
+         <div className="flex items-center gap-1.5"><Star size={12} className="text-brand-accent fill-brand-accent" /> 4.9/5 Rating</div>
          <div className="flex items-center gap-1.5"><CheckCircle size={12} className="text-brand-success" /> Lifetime Access</div>
          <div className="flex items-center gap-1.5"><Users size={12} className="text-brand-success" /> 41,200+ Enrolled</div>
       </div>
@@ -145,7 +145,7 @@ const App: React.FC = () => {
       <style>{`
         @keyframes shine { 0% { left: -150%; } 100% { left: 250%; } }
         .bg-grid-slate { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px); }
-        .text-glow-red { text-shadow: 0 0 15px rgba(217, 4, 41, 0.15); }
+        .text-glow-green { text-shadow: 0 0 15px rgba(5, 150, 105, 0.2); }
       `}</style>
 
       {/* STICKY NAV */}
@@ -163,19 +163,19 @@ const App: React.FC = () => {
       </nav>
 
       <main>
-        {/* HERO: VIDEO 1 */}
+        {/* HERO: VIDEO 1 (CTA #1) */}
         <section className="relative pt-20 pb-24 bg-[#FCFCFD] overflow-hidden">
           <div className="absolute inset-0 bg-grid-slate opacity-60"></div>
-          <div className="container mx-auto px-6 relative z-10 text-center lg:text-left">
+          <div className="container mx-auto px-6 relative z-10 text-center">
             <div className="flex flex-col lg:flex-row items-center gap-16">
-              <div className="w-full lg:w-3/5">
-                  <div className="inline-flex items-center gap-2 bg-red-50 text-brand-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-red-100">
+              <div className="w-full lg:w-3/5 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 bg-emerald-50 text-brand-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-emerald-100">
                      <AlertCircle size={14} /> Critical Industry Shift
                   </div>
-                  <h1 className="text-5xl md:text-8xl font-display font-bold leading-[1.05] mb-8 text-gray-900 tracking-tighter">
+                  <h1 className="text-5xl md:text-8xl font-display font-bold leading-[1.05] mb-8 text-gray-900 tracking-tighter mx-auto lg:mx-0">
                     Can you really afford <br/> to spend <span className="text-brand-primary italic">20 hours</span> on a single render?
                   </h1>
-                  <p className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-12 leading-relaxed">
+                  <p className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-12 leading-relaxed mx-auto lg:mx-0">
                     While you are manually modeling assets, your competitors are using <span className="text-gray-900 font-bold">AI Hybrid Workflows</span> to deliver in 20 minutes.
                   </p>
                   
@@ -184,7 +184,7 @@ const App: React.FC = () => {
 
               <div className="w-full lg:w-2/5 relative">
                    <div className="relative w-full aspect-[4/5] bg-gray-100 rounded-[3rem] overflow-hidden shadow-2xl border border-gray-200">
-                        <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true" className="w-full h-full object-cover" allow="autoplay; fullscreen"></iframe>
+                        <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true&preload=true" className="w-full h-full object-cover" allow="autoplay; fullscreen" loading="lazy"></iframe>
                    </div>
               </div>
             </div>
@@ -215,8 +215,8 @@ const App: React.FC = () => {
                     ))}
                 </div>
 
-                {/* THE DIAGNOSIS SUMMARY */}
-                <div className="mt-12 p-8 md:p-12 bg-red-50 rounded-[3rem] border border-red-200 shadow-2xl shadow-red-200/50">
+                {/* THE DIAGNOSIS SUMMARY (CTA #2) */}
+                <div className="mt-12 p-8 md:p-12 bg-emerald-50 rounded-[3rem] border border-emerald-200 shadow-2xl shadow-emerald-200/50">
                     <p className="text-xl md:text-2xl text-gray-900 leading-relaxed font-bold">
                         If you answered <span className="text-brand-primary underline underline-offset-8 decoration-4 font-black italic">YES</span> to even 2 of these questions, you are in the <span className="text-brand-primary uppercase tracking-widest font-black">High-Risk Zone</span>.
                     </p>
@@ -224,37 +224,34 @@ const App: React.FC = () => {
                     <p className="text-lg text-gray-600 font-medium leading-relaxed mb-10">
                         You are working 5x harder for 1/5th of the pay. Every day you delay, the AI-equipped competition is stealing your high-ticket clients. You don't need another degree—you need the <span className="text-gray-900 font-black">Avada Hybrid Workflow</span> before your skills become permanently obsolete.
                     </p>
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-8 rounded-[2rem] border border-red-100 shadow-xl" />
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-8 rounded-[2rem] border border-emerald-100 shadow-xl" />
                 </div>
              </div>
         </section>
 
         {/* SECTION: THE HYBRID ENGINE */}
         <section className="py-24 bg-white">
-            <div className="container mx-auto px-6 max-w-6xl">
+            <div className="container mx-auto px-6 max-w-6xl text-center">
                 <div className="text-center mb-16">
                     <BrainCircuit className="text-brand-primary mx-auto mb-6" size={48} />
                     <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tighter">Precision + Power.</h2>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
-                    <div className="p-10 rounded-[3rem] bg-gray-50 border border-gray-100 flex flex-col">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div className="p-10 rounded-[3rem] bg-gray-50 border border-gray-100 flex flex-col text-left">
                         <h3 className="text-2xl font-display font-bold text-gray-900 uppercase tracking-tighter mb-4">Phase 1: The Bones (Foundations)</h3>
                         <p className="text-gray-500 mb-8 leading-relaxed">AutoCAD Masterclass & SketchUp Pro Modeling.</p>
                         <div className="space-y-4 mt-auto">
                             <div className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 font-bold text-sm">AutoCAD & SketchUp Mastery</div>
                         </div>
                     </div>
-                    <div className="p-10 rounded-[3rem] bg-gray-900 text-white flex flex-col">
+                    <div className="p-10 rounded-[3rem] bg-gray-900 text-white flex flex-col text-left">
                         <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">Phase 2: The Soul (AI + Rendering)</h3>
                         <p className="text-gray-400 mb-8 leading-relaxed">V-Ray, D5, Lumion & AI Architecture.</p>
-                        <div className="space-y-4 mt-auto text-brand-primary font-black uppercase tracking-[0.3em] animate-pulse">
+                        <div className="space-y-4 mt-auto text-brand-primary font-black uppercase tracking-[0.3em] animate-pulse text-center">
                              INCLUDES 2026 AI PROMPT VAULT
                         </div>
                     </div>
-                </div>
-                <div className="flex justify-center">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
                 </div>
             </div>
         </section>
@@ -267,11 +264,8 @@ const App: React.FC = () => {
                     <Play size={14} fill="currentColor" /> Watch the Speed
                  </div>
                  <h2 className="text-4xl md:text-6xl font-display font-bold mb-8 tracking-tighter">Zero to Photoreal in 180 Seconds.</h2>
-                 <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-black mb-12">
-                     <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&muted=true&loop=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen"></iframe>
-                 </div>
-                 <div className="flex justify-center">
-                     <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white/5 p-10 rounded-[3rem] border border-white/10 backdrop-blur-md" />
+                 <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-black">
+                     <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true&preload=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen" loading="lazy"></iframe>
                  </div>
             </div>
         </section>
@@ -281,7 +275,7 @@ const App: React.FC = () => {
             <div className="container mx-auto px-6 max-w-5xl">
                 <DollarSign className="text-brand-primary mx-auto mb-6" size={48} />
                 <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-16 tracking-tighter">The $100,000 Mistake.</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
                         { t: "Traditional Designer", h: "40 Hours", m: "$1,600", s: "Stressed" },
                         { t: "Software Expert", h: "15 Hours", m: "$1,600", s: "Normal" },
@@ -295,21 +289,17 @@ const App: React.FC = () => {
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-center">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
-                </div>
             </div>
         </section>
 
         {/* SECTION: SURVIVAL GUIDE */}
         <section className="py-24 bg-white border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-6xl">
+            <div className="container mx-auto px-6 max-w-6xl text-center">
                 <div className="flex flex-col lg:flex-row items-center gap-20">
-                    <div className="w-full lg:w-1/2">
-                        <Microscope className="text-brand-primary mb-6" size={40} />
+                    <div className="w-full lg:w-1/2 text-center lg:text-left">
+                        <Microscope className="text-brand-primary mb-6 mx-auto lg:mx-0" size={40} />
                         <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8 tracking-tighter">The 2026 Survival Guide.</h2>
-                        <p className="text-gray-600 text-lg leading-relaxed mb-10">One person with an AI-Hybrid workflow can do the work of a 5-person team. This isn't just a trend; it's the new baseline for professional studios.</p>
-                        <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} />
+                        <p className="text-gray-600 text-lg leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">One person with an AI-Hybrid workflow can do the work of a 5-person team. This isn't just a trend; it's the new baseline for professional studios.</p>
                     </div>
                     <div className="w-full lg:w-1/2 relative">
                          <div className="grid grid-cols-2 gap-4">
@@ -324,9 +314,9 @@ const App: React.FC = () => {
             </div>
         </section>
 
-        {/* SECTION: FULL CURRICULUM */}
+        {/* SECTION: FULL CURRICULUM (CTA #3) */}
         <section className="py-24 bg-[#FCFCFD] border-b border-gray-100">
-             <div className="container mx-auto px-6 max-w-6xl">
+             <div className="container mx-auto px-6 max-w-6xl text-center">
                  <div className="text-center mb-16">
                      <BookOpen className="text-brand-primary mx-auto mb-6" size={48} />
                      <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tighter">The Full Curriculum.</h2>
@@ -335,7 +325,7 @@ const App: React.FC = () => {
                  
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                      {COURSES.map((course, idx) => (
-                         <div key={course.id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 hover:border-brand-primary hover:shadow-2xl transition-all duration-500 group">
+                         <div key={course.id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 hover:border-brand-primary hover:shadow-2xl transition-all duration-500 group text-left">
                              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary mb-4">Module 0{idx+1} • {course.software}</div>
                              <h3 className="text-2xl font-display font-bold text-gray-900 mb-4 tracking-tight group-hover:text-brand-primary transition-colors">{course.title}</h3>
                              <p className="text-gray-500 text-sm leading-relaxed mb-6">{course.description}</p>
@@ -358,19 +348,19 @@ const App: React.FC = () => {
 
         {/* SECTION: VIDEO 3 (DIGITAL VAULT WALKTHROUGH) */}
         <section className="py-24 bg-white overflow-hidden border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-6xl">
-                 <div className="flex flex-col lg:flex-row items-center gap-16 mb-16">
-                    <div className="w-full lg:w-1/2">
+            <div className="container mx-auto px-6 max-w-6xl text-center">
+                 <div className="flex flex-col lg:flex-row items-center gap-16">
+                    <div className="w-full lg:w-1/2 text-center lg:text-left">
                         <div className="inline-flex items-center gap-2 text-brand-primary text-[10px] font-black uppercase tracking-[0.3em] mb-6">
                             <Lock size={14} /> Bonus: The Vault
                         </div>
                         <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8 tracking-tighter">What's Inside the <br/>Student Portal?</h2>
-                        <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium">
+                        <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
                             It's not just videos. It's an entire infrastructure. Watch this walkthrough of the private 41,000+ member dashboard, software vault, and prompt library.
                         </p>
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-w-xl mx-auto lg:mx-0">
                             {['70+ Hours of Content', 'Direct Software Links', '10,000+ Assets'].map((p, i) => (
-                                <div key={i} className="flex items-center gap-3 font-bold text-gray-900">
+                                <div key={i} className="flex items-center justify-center lg:justify-start gap-3 font-bold text-gray-900">
                                     <CheckCircle2 className="text-brand-success" size={18} /> {p}
                                 </div>
                             ))}
@@ -378,33 +368,30 @@ const App: React.FC = () => {
                     </div>
                     <div className="w-full lg:w-1/2">
                         <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 bg-gray-900">
-                            <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&muted=true&loop=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen"></iframe>
+                            <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true&preload=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen" loading="lazy"></iframe>
                         </div>
                     </div>
-                 </div>
-                 <div className="flex justify-center">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
                  </div>
             </div>
         </section>
 
         {/* CAROUSEL */}
-        <section className="py-24 bg-white overflow-hidden">
+        <section className="py-24 bg-white overflow-hidden text-center">
             <StackedCarousel onCourseClick={openCourseModal} />
         </section>
 
-        {/* TESTIMONIALS (4 CARDS) */}
+        {/* TESTIMONIALS */}
         <section className="py-24 bg-[#FCFCFD] overflow-hidden border-y border-gray-100">
-            <div className="container mx-auto px-6 max-w-6xl">
+            <div className="container mx-auto px-6 max-w-6xl text-center">
                 <div className="text-center mb-16">
                     <Quote className="text-brand-primary mx-auto mb-6 opacity-20" size={64} />
                     <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 tracking-tighter">Results from the Trenches.</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {TESTIMONIALS.map((t, i) => (
-                        <div key={i} className="p-10 bg-white rounded-[3rem] border border-gray-100 relative group hover:border-brand-primary transition-all duration-500 shadow-sm">
+                        <div key={i} className="p-10 bg-white rounded-[3rem] border border-gray-100 relative group hover:border-brand-primary transition-all duration-500 shadow-sm text-left">
                              <div className="flex gap-1 mb-6">
-                                {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-yellow-400 text-yellow-400" />)}
+                                {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-brand-accent text-brand-accent" />)}
                              </div>
                              <p className="text-xl font-medium text-gray-700 leading-relaxed mb-8 italic">"{t.content}"</p>
                              <div className="flex items-center gap-4">
@@ -417,30 +404,24 @@ const App: React.FC = () => {
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-center">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
-                </div>
             </div>
         </section>
 
         {/* FAQ */}
         <section className="py-24 bg-white border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-3xl">
+            <div className="container mx-auto px-6 max-w-3xl text-center">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 tracking-tighter">Answering your doubts.</h2>
                 </div>
-                <div className="bg-gray-50 p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-xl mb-12">
+                <div className="bg-gray-50 p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-xl text-left">
                     {FAQ_ITEMS.map((item, i) => (
                         <FAQAccordion key={i} question={item.question} answer={item.answer} />
                     ))}
                 </div>
-                <div className="flex justify-center">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
-                </div>
             </div>
         </section>
 
-        {/* FINAL CTA */}
+        {/* FINAL CTA (CTA #4) */}
         <section className="py-40 bg-gray-900 text-white text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-brand-primary/10 blur-[150px] rounded-full"></div>
             <div className="container mx-auto px-6 relative z-10">

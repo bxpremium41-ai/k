@@ -29,8 +29,8 @@ export const StackedCarousel: React.FC<StackedCarouselProps> = ({ onCourseClick 
     <div className="w-full bg-white text-gray-900 pt-12 pb-24 md:py-24 overflow-hidden relative">
         <style>{`
           @keyframes skyrocket-text {
-            0%, 100% { transform: translateY(0) scale(1); color: #D90429; }
-            50% { transform: translateY(-4px) scale(1.05); color: #ff4d6d; text-shadow: 0 0 15px rgba(217, 4, 41, 0.2); }
+            0%, 100% { transform: translateY(0) scale(1); color: #00DC82; }
+            50% { transform: translateY(-4px) scale(1.05); color: #00FF9C; text-shadow: 0 0 15px rgba(0, 220, 130, 0.2); }
           }
           .animate-skyrocket {
             animation: skyrocket-text 2s ease-in-out infinite;

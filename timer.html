@@ -1,3 +1,4 @@
+
 <!-- 
   INSTRUCTIONS:
   Copy EVERYTHING below this line and paste it into a "Custom HTML" or "Raw HTML" element 
@@ -22,7 +23,7 @@
             },
             colors: {
               brand: {
-                primary: '#D90429',
+                primary: '#059669',
               }
             }
           }
@@ -32,7 +33,6 @@
 </script>
 
 <!-- 3. The Sticky Banner Widget -->
-<!-- Fixed position to stay at top, z-index high to cover other elements -->
 <div id="avada-sticky-banner" class="fixed top-0 left-0 w-full z-[9999] bg-black text-white shadow-2xl border-b border-gray-800 font-sans antialiased">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center gap-4 md:gap-8">
         
@@ -62,8 +62,6 @@
 <!-- 4. The Logic -->
 <script>
     (function() {
-        // === CONFIGURATION ===
-        // 2 hours 23 minutes 49 seconds
         var DURATION = (2 * 60 * 60 * 1000) + (23 * 60 * 1000) + (49 * 1000);
         
         var els = {
@@ -78,11 +76,6 @@
 
         function calculateTime() {
             var now = Date.now();
-            
-            // Deterministic Sync Logic:
-            // This calculates a countdown based on the global timestamp.
-            // It ensures that any user, on any device (HTML builder or React App),
-            // sees the EXACT same time remaining without needing shared storage.
             var remaining = DURATION - (now % DURATION);
 
             var h = Math.floor((remaining / (1000 * 60 * 60)) % 24);
@@ -94,8 +87,7 @@
             if (els.s) els.s.innerText = formatTime(s);
         }
 
-        // Start Loop
         setInterval(calculateTime, 1000);
-        calculateTime(); // Initial call
+        calculateTime();
     })();
 </script>

@@ -19,7 +19,7 @@ const RAW_COURSES: Course[] = [
     software: 'AutoCAD',
     description: 'The "Bones" of your workflow. Master precision technical drawing so your AI renders have accurate proportions and construction feasibility.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1fV5bz4JDugh8HxLMJ0fXu5K5sDj3qlSR',
-    color: 'from-red-500 to-red-400',
+    color: 'from-emerald-500 to-emerald-400',
     students: '42.5k',
     learningPoints: [
       'Industry-standard technical drafting',
@@ -151,7 +151,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Certified Digital Diploma',
       'Private Support Discord'
     ],
-    accentColor: 'border-brand-success shadow-glow-success'
+    accentColor: 'border-brand-primary shadow-glow'
   }
 ];
 

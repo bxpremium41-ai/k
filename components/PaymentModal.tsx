@@ -108,7 +108,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
                 variables: { 
                     fontFamily: '"Outfit", sans-serif',
                     borderRadius: '12px', 
-                    colorPrimary: '#D90429', 
+                    colorPrimary: '#059669', 
                 },
             }
         });
@@ -337,7 +337,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
             {/* Footer Button */}
             {(viewState === 'FORM' || viewState === 'PROCESSING') && paymentMethod === 'card' && (
                 <div className="p-6 md:p-8 border-t border-gray-100 bg-white shrink-0">
-                    <button onClick={handleCardPay} disabled={viewState === 'PROCESSING'} className="w-full py-4 bg-[#10B981] text-white rounded-xl font-black text-lg uppercase tracking-[0.2em] shadow-[0_15px_30px_-5px_rgba(16,185,129,0.3)] hover:shadow-[0_20px_40px_-5px_rgba(16,185,129,0.4)] flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
+                    <button onClick={handleCardPay} disabled={viewState === 'PROCESSING'} className="w-full py-4 bg-brand-primary text-white rounded-xl font-black text-lg uppercase tracking-[0.2em] shadow-glow hover:shadow-glow-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
                         {viewState === 'PROCESSING' ? <Loader2 className="animate-spin" /> : <>Enroll Now • $49 <ArrowRight size={20} /></>}
                     </button>
                     <div className="flex items-center justify-center gap-4 mt-4 opacity-50">
