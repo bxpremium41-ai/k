@@ -1,40 +1,29 @@
+
 import React, { useState, useEffect } from 'react';
 import { PaymentModal } from './components/PaymentModal';
 import { AdminModal } from './components/AdminModal';
 import { LoginModal } from './components/LoginModal';
-import { CourseRow } from './components/CourseRow';
 import { StackedCarousel } from './components/StackedCarousel';
-import { TESTIMONIALS, FAQ_ITEMS, ROWS, COURSES } from './constants';
+import { TESTIMONIALS, FAQ_ITEMS, COURSES } from './constants';
 import { GlassCard } from './components/ui/GlassCard';
 import { 
-  ChevronDown, CheckCircle2, ArrowRight, Timer, Quote, Star, LogIn, 
-  Zap, TrendingUp, Sparkles, Target, Wallet, AlertCircle, XCircle, 
-  CheckCircle, ShieldCheck, Rocket, Trophy, Briefcase, Globe,
-  ArrowDownCircle, Lock, Gem, BarChart3, HelpCircle, Users, GraduationCap, Building2, Lightbulb, ListChecks,
-  Crown,
-  ChevronRight,
-  Shield,
-  Radio
+  Check, CheckCircle2, ArrowRight, Star, LogIn, 
+  Zap, TrendingUp, Sparkles, AlertCircle, XCircle, 
+  CheckCircle, Rocket, Briefcase, Play,
+  Lock, Gem, BarChart3, Users, GraduationCap, ListChecks,
+  Radio, Shield, ChevronDown, Quote, MousePointer2, Clock, History, Target,
+  BrainCircuit, HelpCircle, DollarSign, Microscope, BookOpen
 } from 'lucide-react';
 import { Course } from './types';
 
-const RAW_JOINERS = [
-  { name: "Liam O.", city: "London", time: "2 mins ago" },
-  { name: "Emma W.", city: "New York", time: "5 mins ago" },
-  { name: "Noah J.", city: "Toronto", time: "12 mins ago" },
-  { name: "Olivia M.", city: "Sydney", time: "15 mins ago" },
-  { name: "William B.", city: "Berlin", time: "18 mins ago" },
-  { name: "Ava C.", city: "Chicago", time: "22 mins ago" }
-];
-
 const Logo = () => (
   <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
-    <div className="relative w-10 h-10 border-2 border-gray-900 flex items-center justify-center bg-white transition-all duration-300 group-hover:bg-gray-900 group-hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
-      <span className="font-display font-black text-xl tracking-tighter relative z-10">AV</span>
+    <div className="relative w-10 h-10 border-2 border-gray-900 flex items-center justify-center bg-transparent transition-all duration-300 group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <span className="font-display font-black text-xl tracking-tighter relative z-10 text-gray-900">AV</span>
     </div>
     <div className="flex flex-col text-left">
        <span className="font-display font-bold text-xl tracking-[0.25em] leading-none text-gray-900">AVADA</span>
-       <div className="w-full h-[1px] bg-gray-300 my-0.5"></div>
+       <div className="w-full h-[1px] bg-gray-200 my-0.5"></div>
        <span className="text-[7px] font-bold uppercase tracking-widest text-gray-500 flex justify-between w-full leading-none">
           <span>ARCH</span>
           <span>•</span>
@@ -44,68 +33,83 @@ const Logo = () => (
   </div>
 );
 
-const MasterCTA = ({ onClick, timeLeft, className = "", theme = "light" }: { onClick: () => void, timeLeft: any, className?: string, theme?: "light" | "dark" }) => {
+interface MasterCTAProps {
+  onClick: () => void;
+  timeLeft: { h: number; m: number; s: number };
+  className?: string;
+}
+
+const MasterCTA: React.FC<MasterCTAProps> = ({ onClick, timeLeft, className = "" }) => {
   const formatTime = (val: number) => val.toString().padStart(2, '0');
-  const isDark = theme === "dark";
   
   return (
     <div className={`flex flex-col items-center gap-4 w-full max-w-xl mx-auto lg:mx-0 ${className}`}>
-      {/* Header Info: Pricing & Scarcity */}
       <div className="flex items-end justify-between w-full px-2 mb-1">
         <div className="flex flex-col items-start">
-           <div className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] ${isDark ? 'text-gray-300' : 'text-gray-400'} mb-1`}>
-              <Zap size={10} className="text-brand-success" /> Limited Time Package
+           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+              <Shield size={10} className="text-brand-success" /> Secure Enrollment
            </div>
            <div className="flex items-baseline gap-2.5">
-              <span className={`text-4xl sm:text-5xl font-display font-black tracking-tighter ${isDark ? 'text-white' : 'text-gray-900'}`}>$49</span>
-              <span className={`${isDark ? 'text-white/40' : 'text-gray-400'} line-through text-lg font-bold font-sans`}>$99</span>
+              <span className="text-4xl sm:text-5xl font-display font-black tracking-tighter text-gray-900">$49</span>
+              <span className="text-gray-300 line-through text-lg font-bold font-sans">$99</span>
            </div>
         </div>
-
         <div className="flex flex-col items-end">
            <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-red-600 mb-1">
-              Offer ends in:
+              Final batch discount ends:
            </div>
-           <div className={`flex items-center gap-1.5 font-mono font-bold text-xl sm:text-2xl tabular-nums ${isDark ? 'text-white' : 'text-gray-800'}`}>
-              <div className="flex flex-col items-center">
-                <span>{formatTime(timeLeft.h)}</span>
-              </div>
-              <span className={`${isDark ? 'text-white/20' : 'text-gray-200'} -mt-1`}>:</span>
-              <div className="flex flex-col items-center">
-                <span>{formatTime(timeLeft.m)}</span>
-              </div>
-              <span className={`${isDark ? 'text-white/20' : 'text-gray-200'} -mt-1`}>:</span>
-              <div className="flex flex-col items-center">
-                <span>{formatTime(timeLeft.s)}</span>
-              </div>
+           <div className="flex items-center gap-1.5 font-mono font-bold text-xl sm:text-2xl tabular-nums text-gray-800">
+              <span>{formatTime(timeLeft.h)}</span>
+              <span className="text-gray-200 -mt-1">:</span>
+              <span>{formatTime(timeLeft.m)}</span>
+              <span className="text-gray-200 -mt-1">:</span>
+              <span>{formatTime(timeLeft.s)}</span>
            </div>
         </div>
       </div>
 
-      {/* Main Action Button */}
       <button 
         onClick={onClick} 
-        className="group relative w-full bg-[#10b981] hover:bg-[#0ea271] text-white py-6 sm:py-7 px-4 sm:px-12 rounded-[1.5rem] transition-all duration-500 shadow-[0_30px_60px_-15px_rgba(16,185,129,0.4)] hover:shadow-[0_40px_80px_-15px_rgba(16,185,129,0.6)] hover:-translate-y-1.5 active:scale-[0.98] overflow-hidden border border-white/20"
+        className="group relative w-full bg-brand-primary hover:bg-gray-900 text-white py-6 sm:py-7 px-4 sm:px-12 rounded-2xl transition-all duration-500 shadow-[0_30px_60px_-15px_rgba(217,4,41,0.25)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] hover:-translate-y-1 active:scale-[0.98] overflow-hidden border border-white/20"
       >
         <div className="relative z-10 flex items-center justify-center gap-2 sm:gap-5">
-           <span className="text-sm sm:text-2xl font-black uppercase tracking-tight whitespace-nowrap">Download All Courses</span>
+           <span className="text-sm sm:text-xl font-black uppercase tracking-tight whitespace-nowrap">All Courses + AI Bundle</span>
            <div className="bg-white/20 p-1.5 sm:p-2 rounded-full group-hover:translate-x-2 transition-transform duration-300">
               <ArrowRight size={18} className="sm:w-6 sm:h-6" />
            </div>
         </div>
-        
         <div className="absolute inset-0 w-full h-full pointer-events-none">
-           <div className="absolute top-0 -left-full w-2/3 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-30deg] group-hover:animate-[shine_1.2s_infinite]"></div>
+           <div className="absolute top-0 -left-full w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-30deg] group-hover:animate-[shine_1.5s_infinite]"></div>
         </div>
-        
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
       </button>
 
-      {/* Trust & Stats Footer */}
-      <div className={`flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10px] font-bold ${isDark ? 'text-gray-400' : 'text-gray-400'} uppercase tracking-widest mt-1`}>
-         <div className="flex items-center gap-1.5"><Shield size={12} className="text-brand-success" /> Secured Checkout</div>
-         <div className="flex items-center gap-1.5"><CheckCircle size={12} className="text-brand-success" /> Instant Lifetime Access</div>
-         <div className="flex items-center gap-1.5"><Users size={12} className="text-brand-success" /> 41k+ Joined</div>
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+         <div className="flex items-center gap-1.5"><Star size={12} className="text-yellow-500 fill-yellow-500" /> 4.9/5 Rating</div>
+         <div className="flex items-center gap-1.5"><CheckCircle size={12} className="text-brand-success" /> Lifetime Access</div>
+         <div className="flex items-center gap-1.5"><Users size={12} className="text-brand-success" /> 41,200+ Enrolled</div>
+      </div>
+    </div>
+  );
+};
+
+interface FAQAccordionProps {
+  question: string;
+  answer: string;
+}
+
+const FAQAccordion: React.FC<FAQAccordionProps> = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-gray-100 last:border-0">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full py-6 flex items-center justify-between text-left group"
+      >
+        <span className="text-lg font-bold text-gray-900 group-hover:text-brand-primary transition-colors">{question}</span>
+        <ChevronDown size={20} className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-primary' : ''}`} />
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-6' : 'max-h-0'}`}>
+        <p className="text-gray-500 leading-relaxed font-medium">{answer}</p>
       </div>
     </div>
   );
@@ -113,19 +117,13 @@ const MasterCTA = ({ onClick, timeLeft, className = "", theme = "light" }: { onC
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [timeLeft, setTimeLeft] = useState({ h: 2, m: 23, s: 49 });
-  const [joiners] = useState(RAW_JOINERS);
-  const [currentJoinerIndex, setCurrentJoinerIndex] = useState(0);
-  const [showToast, setShowToast] = useState(false);
-  const [mentorTab, setMentorTab] = useState<'student' | 'pro'>('student');
 
   useEffect(() => {
     const calculateTime = () => {
-      const DURATION = (2 * 60 * 60 * 1000) + (23 * 60 * 1000) + (49 * 1000);
+      const DURATION = (2 * 60 * 60 * 1000) + (2 * 23 * 60 * 1000) + (49 * 1000);
       const now = Date.now();
       const remaining = DURATION - (now % DURATION);
       setTimeLeft({
@@ -139,448 +137,327 @@ const App: React.FC = () => {
     return () => clearInterval(timerInterval);
   }, []);
 
-  useEffect(() => {
-    const toastCycle = setInterval(() => {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 5000);
-      setTimeout(() => setCurrentJoinerIndex(p => (p + 1) % joiners.length), 6000);
-    }, 15000);
-    return () => clearInterval(toastCycle);
-  }, [joiners.length]);
-
   const openGeneralModal = () => { setSelectedCourse(null); setIsModalOpen(true); };
   const openCourseModal = (course: Course) => { setSelectedCourse(course); setIsModalOpen(true); };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-gray-900 font-sans overflow-x-hidden selection:bg-red-100">
+    <div className="min-h-screen bg-[#FCFCFD] text-gray-900 font-sans overflow-x-hidden selection:bg-brand-primary selection:text-white">
       <style>{`
         @keyframes shine { 0% { left: -150%; } 100% { left: 250%; } }
-        .bg-grid-pattern { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .bg-grid-slate { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px); }
+        .text-glow-red { text-shadow: 0 0 15px rgba(217, 4, 41, 0.15); }
       `}</style>
 
-      {/* NAVBAR */}
-      <nav className="w-full z-50 bg-white border-b border-gray-100 sticky top-0">
-        <div className="bg-gray-900 text-white py-2 px-4 flex justify-center gap-6 text-[11px] font-bold uppercase tracking-widest">
-          <div className="flex items-center gap-3">
-             <span className="text-gray-500 line-through">$99</span>
-             <span className="text-brand-success">$49 Lifetime Offer</span>
-          </div>
+      {/* STICKY NAV */}
+      <nav className="w-full z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100 sticky top-0">
+        <div className="bg-brand-primary text-white py-2 px-4 flex justify-center text-center text-[9px] font-black uppercase tracking-[0.2em]">
+             ALERT: Traditional designing is evolving. The 2026 AI Hybrid Batch is 92% full.
         </div>
         <div className="px-6 md:px-12 py-4 flex items-center justify-between">
           <Logo />
           <div className="flex items-center gap-6">
-             <button onClick={() => setIsLoginOpen(true)} className="flex items-center gap-2 text-sm font-bold text-gray-900 hover:text-brand-primary bg-gray-50 px-5 py-2.5 rounded-full border border-gray-200 transition-colors shadow-sm"><LogIn size={16} /> Student Login</button>
+             <button onClick={() => setIsLoginOpen(true)} className="flex items-center gap-2 text-[10px] font-bold text-gray-500 hover:text-brand-primary transition-colors uppercase tracking-widest"><LogIn size={14} /> Student Login</button>
+             <button onClick={openGeneralModal} className="hidden md:block bg-gray-900 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary transition-all">Enroll for $49</button>
           </div>
         </div>
       </nav>
 
       <main>
-        {/* SECTION 1: HERO */}
-        <section className="relative min-h-[90vh] w-full flex items-center bg-white pt-12 pb-20 overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-60"></div>
-          <div className="container mx-auto px-6 md:px-12 relative z-10">
+        {/* HERO: VIDEO 1 */}
+        <section className="relative pt-20 pb-24 bg-[#FCFCFD] overflow-hidden">
+          <div className="absolute inset-0 bg-grid-slate opacity-60"></div>
+          <div className="container mx-auto px-6 relative z-10 text-center lg:text-left">
             <div className="flex flex-col lg:flex-row items-center gap-16">
-              <div className="w-full lg:w-1/2 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-red-100 shadow-sm">
-                     <Gem size={14} /> This is a revolution in the Design Industry
+              <div className="w-full lg:w-3/5">
+                  <div className="inline-flex items-center gap-2 bg-red-50 text-brand-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-red-100">
+                     <AlertCircle size={14} /> Critical Industry Shift
                   </div>
-                  <h1 className="text-4xl md:text-7xl font-display font-bold leading-[1.1] mb-8 text-gray-900 tracking-tight">
-                    Learn Interior/Exterior Design to Render: <span className="text-brand-primary italic">5 Courses + AI</span>
+                  <h1 className="text-5xl md:text-8xl font-display font-bold leading-[1.05] mb-8 text-gray-900 tracking-tighter">
+                    Can you really afford <br/> to spend <span className="text-brand-primary italic">20 hours</span> on a single render?
                   </h1>
-                  <div className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-8 leading-relaxed">
-                    <p className="mb-6">
-                      In 2026, clients want <span className="text-gray-900 font-bold">speed, quality, and wow-worthy visuals.</span>
-                    </p>
-                    <p>
-                      We’ll show you exactly how to deliver — with <span className="text-gray-900 font-bold underline decoration-brand-primary/30">SketchUp, V-Ray, Lumion, AutoCAD, and D5</span> — like a top-tier designer (even if you’re starting from zero).
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-10">
-                      <div className="bg-gray-900 text-white px-5 py-2.5 rounded-full flex items-center gap-2.5 text-xs font-bold shadow-lg shadow-gray-200 border border-gray-700">
-                          <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                          </span>
-                          <span>New: Weekly Live AI Masterclasses included for Free!</span>
-                      </div>
-                  </div>
+                  <p className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mb-12 leading-relaxed">
+                    While you are manually modeling assets, your competitors are using <span className="text-gray-900 font-bold">AI Hybrid Workflows</span> to deliver in 20 minutes.
+                  </p>
                   
                   <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} />
               </div>
-              <div className="w-full lg:w-1/2 flex flex-col items-center">
-                   <div className="relative w-full aspect-video max-w-[700px]">
-                        <div className="absolute inset-0 bg-brand-primary/10 blur-[120px] rounded-full animate-pulse"></div>
-                        <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_60px_100px_rgba(0,0,0,0.2)] border-4 border-white bg-black relative">
-                             <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true" className="w-full h-full object-cover" allow="autoplay; fullscreen"></iframe>
-                        </div>
+
+              <div className="w-full lg:w-2/5 relative">
+                   <div className="relative w-full aspect-[4/5] bg-gray-100 rounded-[3rem] overflow-hidden shadow-2xl border border-gray-200">
+                        <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&loop=true&muted=true" className="w-full h-full object-cover" allow="autoplay; fullscreen"></iframe>
                    </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2: MENTOR GUIDANCE (MOVED UP) */}
-        <section className="py-24 bg-white border-b border-gray-100 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gray-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
-            <div className="container mx-auto px-6 max-w-6xl relative z-10">
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-blue-100">
-                        <Sparkles size={14} /> The Industry Shift
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tight">
-                        Design Smarter, <span className="text-brand-primary">Not Harder.</span>
-                    </h2>
-                    <p className="text-gray-500 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-                        The old way of spending 12 hours on a single render is dead. <br className="hidden md:block" />
-                        See how mastering <span className="text-gray-900 font-bold">AI + Standard Tools</span> changes your daily life.
-                    </p>
+        {/* SECTION: THE DIAGNOSIS (6 ITEMS) */}
+        <section className="py-24 bg-white border-y border-gray-100">
+             <div className="container mx-auto px-6 max-w-4xl text-center">
+                <HelpCircle className="text-brand-primary mx-auto mb-6" size={40} />
+                <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-10 tracking-tighter">Is your career <span className="text-brand-primary">Stagnating?</span></h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    {[
+                        "Do you spend more than 8 hours on a single 3D model?",
+                        "Do your clients keep asking for 'just one more small revision'?",
+                        "Is your monthly income stuck below $3,000?",
+                        "Are you terrified that AI will eventually replace you?",
+                        "Do you lack a portfolio that stops people from scrolling?",
+                        "Are you still using 2015 rendering techniques?"
+                    ].map((q, i) => (
+                        <div key={i} className="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-brand-primary transition-all group">
+                             <div className="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center shrink-0 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all">
+                                <Check size={12} className="text-white opacity-0 group-hover:opacity-100" />
+                             </div>
+                             <p className="text-sm font-bold text-gray-600 group-hover:text-gray-900">{q}</p>
+                        </div>
+                    ))}
                 </div>
 
-                <div className="flex flex-col lg:flex-row bg-white rounded-[2.5rem] overflow-hidden border border-gray-200 shadow-2xl shadow-gray-200/50">
-                    <div className="w-full lg:w-1/3 bg-gray-50 p-8 lg:p-10 flex flex-col gap-4 border-r border-gray-100">
-                        <button 
-                            onClick={() => setMentorTab('student')} 
-                            className={`flex items-center gap-4 p-5 rounded-2xl transition-all text-left duration-300 border ${
-                                mentorTab === 'student' 
-                                ? 'bg-white border-brand-primary/20 shadow-lg scale-[1.02]' 
-                                : 'bg-transparent border-transparent hover:bg-white hover:border-gray-200'
-                            }`}
-                        >
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                mentorTab === 'student' ? 'bg-brand-primary text-white' : 'bg-gray-200 text-gray-500'
-                            }`}>
-                                <GraduationCap size={22} />
-                            </div>
-                            <div>
-                                <h4 className={`font-bold text-base ${mentorTab === 'student' ? 'text-gray-900' : 'text-gray-500'}`}>The Student</h4>
-                                <p className="text-xs text-gray-400 font-medium">"I need a job."</p>
-                            </div>
-                        </button>
-                        <button 
-                            onClick={() => setMentorTab('pro')} 
-                            className={`flex items-center gap-4 p-5 rounded-2xl transition-all text-left duration-300 border ${
-                                mentorTab === 'pro' 
-                                ? 'bg-white border-brand-primary/20 shadow-lg scale-[1.02]' 
-                                : 'bg-transparent border-transparent hover:bg-white hover:border-gray-200'
-                            }`}
-                        >
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                mentorTab === 'pro' ? 'bg-brand-primary text-white' : 'bg-gray-200 text-gray-500'
-                            }`}>
-                                <Briefcase size={22} />
-                            </div>
-                            <div>
-                                <h4 className={`font-bold text-base ${mentorTab === 'pro' ? 'text-gray-900' : 'text-gray-500'}`}>The Professional</h4>
-                                <p className="text-xs text-gray-400 font-medium">"I need more time."</p>
-                            </div>
-                        </button>
+                {/* THE DIAGNOSIS SUMMARY */}
+                <div className="mt-12 p-8 md:p-12 bg-red-50 rounded-[3rem] border border-red-200 shadow-2xl shadow-red-200/50">
+                    <p className="text-xl md:text-2xl text-gray-900 leading-relaxed font-bold">
+                        If you answered <span className="text-brand-primary underline underline-offset-8 decoration-4 font-black italic">YES</span> to even 2 of these questions, you are in the <span className="text-brand-primary uppercase tracking-widest font-black">High-Risk Zone</span>.
+                    </p>
+                    <div className="w-20 h-1 bg-brand-primary mx-auto my-6"></div>
+                    <p className="text-lg text-gray-600 font-medium leading-relaxed mb-10">
+                        You are working 5x harder for 1/5th of the pay. Every day you delay, the AI-equipped competition is stealing your high-ticket clients. You don't need another degree—you need the <span className="text-gray-900 font-black">Avada Hybrid Workflow</span> before your skills become permanently obsolete.
+                    </p>
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-8 rounded-[2rem] border border-red-100 shadow-xl" />
+                </div>
+             </div>
+        </section>
+
+        {/* SECTION: THE HYBRID ENGINE */}
+        <section className="py-24 bg-white">
+            <div className="container mx-auto px-6 max-w-6xl">
+                <div className="text-center mb-16">
+                    <BrainCircuit className="text-brand-primary mx-auto mb-6" size={48} />
+                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tighter">Precision + Power.</h2>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+                    <div className="p-10 rounded-[3rem] bg-gray-50 border border-gray-100 flex flex-col">
+                        <h3 className="text-2xl font-display font-bold text-gray-900 uppercase tracking-tighter mb-4">Phase 1: The Bones (Foundations)</h3>
+                        <p className="text-gray-500 mb-8 leading-relaxed">AutoCAD Masterclass & SketchUp Pro Modeling.</p>
+                        <div className="space-y-4 mt-auto">
+                            <div className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 font-bold text-sm">AutoCAD & SketchUp Mastery</div>
+                        </div>
                     </div>
-                    <div className="flex-1 p-8 lg:p-16 relative bg-white">
-                        {mentorTab === 'student' ? (
-                            <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
-                                <div>
-                                    <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4">
-                                        Stop being a "Junior." Start as a <span className="text-brand-primary">Specialist.</span>
-                                    </h3>
-                                    <p className="text-gray-600 leading-relaxed">
-                                        Most graduates spend 2 years drawing bathroom tiles. You will walk into interviews with a portfolio of 
-                                        <span className="font-bold text-gray-900"> AI-generated skyscrapers and cinema-quality renders</span>. 
-                                        Firms don't hire you for your grades; they hire you for your speed.
-                                    </p>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
-                                            <CheckCircle2 size={16} className="text-green-500" /> Viral Portfolio
-                                        </div>
-                                        <p className="text-xs text-gray-500">Create complex designs in minutes using Midjourney.</p>
-                                    </div>
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
-                                            <CheckCircle2 size={16} className="text-green-500" /> Full Stack Skills
-                                        </div>
-                                        <p className="text-xs text-gray-500">AutoCAD, SketchUp, V-Ray, D5 - All included.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
-                                <div>
-                                    <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4">
-                                        Double your output. <span className="text-brand-primary">Half your hours.</span>
-                                    </h3>
-                                    <p className="text-gray-600 leading-relaxed">
-                                        You are likely undercharging because projects take too long. With our AI workflow, you can generate 
-                                        client concepts in <span className="font-bold text-gray-900">30 seconds</span> and finalize renders in real-time. 
-                                        Take on more clients without hiring more staff.
-                                    </p>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                     <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
-                                            <Zap size={16} className="text-yellow-500" /> Rapid Concepting
-                                        </div>
-                                        <p className="text-xs text-gray-500">Show clients 10 options in the first meeting.</p>
-                                    </div>
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <div className="font-bold text-gray-900 text-sm mb-1 flex items-center gap-2">
-                                            <Zap size={16} className="text-yellow-500" /> Real-Time Rendering
-                                        </div>
-                                        <p className="text-xs text-gray-500">Make changes live in front of the client with D5.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                    <div className="p-10 rounded-[3rem] bg-gray-900 text-white flex flex-col">
+                        <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">Phase 2: The Soul (AI + Rendering)</h3>
+                        <p className="text-gray-400 mb-8 leading-relaxed">V-Ray, D5, Lumion & AI Architecture.</p>
+                        <div className="space-y-4 mt-auto text-brand-primary font-black uppercase tracking-[0.3em] animate-pulse">
+                             INCLUDES 2026 AI PROMPT VAULT
+                        </div>
+                    </div>
+                </div>
+                <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
+                </div>
+            </div>
+        </section>
+
+        {/* SECTION: VIDEO 2 (WORKFLOW PROOF) */}
+        <section className="py-24 bg-gray-900 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary/10 blur-[100px]"></div>
+            <div className="container mx-auto px-6 max-w-5xl text-center">
+                 <div className="inline-flex items-center gap-2 text-brand-primary text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                    <Play size={14} fill="currentColor" /> Watch the Speed
+                 </div>
+                 <h2 className="text-4xl md:text-6xl font-display font-bold mb-8 tracking-tighter">Zero to Photoreal in 180 Seconds.</h2>
+                 <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-black mb-12">
+                     <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&muted=true&loop=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen"></iframe>
+                 </div>
+                 <div className="flex justify-center">
+                     <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white/5 p-10 rounded-[3rem] border border-white/10 backdrop-blur-md" />
+                 </div>
+            </div>
+        </section>
+
+        {/* SECTION: THE $100K OPPORTUNITY COST */}
+        <section className="py-24 bg-[#F9FAFB] border-y border-gray-100 text-center">
+            <div className="container mx-auto px-6 max-w-5xl">
+                <DollarSign className="text-brand-primary mx-auto mb-6" size={48} />
+                <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-16 tracking-tighter">The $100,000 Mistake.</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                    {[
+                        { t: "Traditional Designer", h: "40 Hours", m: "$1,600", s: "Stressed" },
+                        { t: "Software Expert", h: "15 Hours", m: "$1,600", s: "Normal" },
+                        { t: "Avada Hybrid Designer", h: "2 Hours", m: "$1,600", s: "Leader", highlight: true }
+                    ].map((item, i) => (
+                        <div key={i} className={`p-8 rounded-[2.5rem] border ${item.highlight ? 'bg-white border-brand-primary shadow-2xl scale-105 z-10' : 'bg-gray-100 border-gray-200'}`}>
+                             <h4 className="text-lg font-bold mb-4">{item.t}</h4>
+                             <div className="text-3xl font-display font-black text-gray-900 mb-2">{item.h}</div>
+                             <div className="text-3xl font-display font-black text-brand-primary mb-6">{item.m}</div>
+                             <span className="text-[10px] font-black uppercase tracking-widest">{item.s}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
+                </div>
+            </div>
+        </section>
+
+        {/* SECTION: SURVIVAL GUIDE */}
+        <section className="py-24 bg-white border-b border-gray-100">
+            <div className="container mx-auto px-6 max-w-6xl">
+                <div className="flex flex-col lg:flex-row items-center gap-20">
+                    <div className="w-full lg:w-1/2">
+                        <Microscope className="text-brand-primary mb-6" size={40} />
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8 tracking-tighter">The 2026 Survival Guide.</h2>
+                        <p className="text-gray-600 text-lg leading-relaxed mb-10">One person with an AI-Hybrid workflow can do the work of a 5-person team. This isn't just a trend; it's the new baseline for professional studios.</p>
+                        <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} />
+                    </div>
+                    <div className="w-full lg:w-1/2 relative">
+                         <div className="grid grid-cols-2 gap-4">
+                             {['AutoCAD Mastery', 'SketchUp Pro', 'V-Ray Photo', 'AI Gen Design'].map((b, i) => (
+                                 <div key={i} className="p-10 bg-gray-50 rounded-3xl border border-gray-100 flex flex-col items-center justify-center text-center hover:bg-brand-primary hover:text-white transition-all group">
+                                      <div className="font-display font-bold text-lg leading-tight">{b}</div>
+                                 </div>
+                             ))}
+                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        {/* SECTION 3: ALL-ACCESS PASS GRID */}
-        <section className="py-24 bg-white relative border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-7xl">
-                <div className="bg-[#FFFFFF] rounded-[3rem] p-8 md:p-16 border border-gray-100 shadow-[0_30px_100px_rgba(0,0,0,0.05)] flex flex-col lg:flex-row gap-16">
-                    <div className="w-full lg:w-2/5 flex flex-col">
-                        <div className="inline-flex items-center gap-2 bg-[#D90429] text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-10 w-fit shadow-lg shadow-red-200">
-                           <ListChecks size={14} /> The Full Curriculum
-                        </div>
-                        <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8 tracking-tight leading-tight">
-                            Your Lifetime <br/> All-Access Pass
-                        </h2>
-                        <p className="text-gray-500 text-lg font-medium leading-relaxed mb-12">
-                            When you join today, you don't just get one course. You unlock <span className="text-gray-900 font-bold underline decoration-red-200">every single masterclass</span> in our library, plus every course we ever release in the future.
-                        </p>
-                        <div className="mt-auto bg-[#FDF2F2] p-8 rounded-[2rem] border border-[#FDECEC] relative overflow-hidden mb-10 lg:mb-0">
-                             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Total Combined Duration</h4>
-                             <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-display font-black text-[#D90429]">70+</span>
-                                <span className="text-2xl font-display font-bold text-gray-900">Hours</span>
-                             </div>
-                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Of Premium 4K Video Content</p>
-                        </div>
-                    </div>
+        {/* SECTION: FULL CURRICULUM */}
+        <section className="py-24 bg-[#FCFCFD] border-b border-gray-100">
+             <div className="container mx-auto px-6 max-w-6xl">
+                 <div className="text-center mb-16">
+                     <BookOpen className="text-brand-primary mx-auto mb-6" size={48} />
+                     <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tighter">The Full Curriculum.</h2>
+                     <p className="text-gray-500 text-xl font-medium max-w-2xl mx-auto">6 deep-dive modules built to transform you into a $150/hr Hybrid Designer.</p>
+                 </div>
+                 
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                     {COURSES.map((course, idx) => (
+                         <div key={course.id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 hover:border-brand-primary hover:shadow-2xl transition-all duration-500 group">
+                             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary mb-4">Module 0{idx+1} • {course.software}</div>
+                             <h3 className="text-2xl font-display font-bold text-gray-900 mb-4 tracking-tight group-hover:text-brand-primary transition-colors">{course.title}</h3>
+                             <p className="text-gray-500 text-sm leading-relaxed mb-6">{course.description}</p>
+                             <ul className="space-y-3">
+                                 {course.learningPoints.map((point, pIdx) => (
+                                     <li key={pIdx} className="flex items-start gap-3 text-xs font-bold text-gray-700">
+                                         <CheckCircle2 size={14} className="text-brand-success shrink-0 mt-0.5" />
+                                         {point}
+                                     </li>
+                                 ))}
+                             </ul>
+                         </div>
+                     ))}
+                 </div>
+                 <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
+                 </div>
+             </div>
+        </section>
 
-                    <div className="w-full lg:w-3/5">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {COURSES.map((course, index) => (
-                                <div key={course.id} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-5 hover:shadow-xl transition-all duration-300 group cursor-pointer" onClick={() => openCourseModal(course)}>
-                                     <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-50 shrink-0 shadow-sm border border-gray-100">
-                                         <img src={course.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={course.title} />
-                                     </div>
-                                     <div className="flex flex-col">
-                                         <span className="text-[10px] font-black text-[#D90429] uppercase tracking-[0.2em] mb-0.5">
-                                             Course {String(index + 1).padStart(2, '0')} • {course.software}
-                                         </span>
-                                         <h4 className="text-sm md:text-base font-bold text-gray-900 leading-tight">{course.title}</h4>
-                                     </div>
+        {/* SECTION: VIDEO 3 (DIGITAL VAULT WALKTHROUGH) */}
+        <section className="py-24 bg-white overflow-hidden border-b border-gray-100">
+            <div className="container mx-auto px-6 max-w-6xl">
+                 <div className="flex flex-col lg:flex-row items-center gap-16 mb-16">
+                    <div className="w-full lg:w-1/2">
+                        <div className="inline-flex items-center gap-2 text-brand-primary text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                            <Lock size={14} /> Bonus: The Vault
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8 tracking-tighter">What's Inside the <br/>Student Portal?</h2>
+                        <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium">
+                            It's not just videos. It's an entire infrastructure. Watch this walkthrough of the private 41,000+ member dashboard, software vault, and prompt library.
+                        </p>
+                        <div className="space-y-4">
+                            {['70+ Hours of Content', 'Direct Software Links', '10,000+ Assets'].map((p, i) => (
+                                <div key={i} className="flex items-center gap-3 font-bold text-gray-900">
+                                    <CheckCircle2 className="text-brand-success" size={18} /> {p}
                                 </div>
                             ))}
                         </div>
                     </div>
-                </div>
-
-                {/* MASTER CTA #2 */}
-                <div className="mt-16">
-                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="max-w-2xl" />
-                </div>
-
-                {/* NEW VIDEO SECTION: Only Complete Course On AI */}
-                <div className="mt-24 text-center">
-                    <h3 className="text-3xl md:text-5xl font-display font-bold text-gray-900 mb-12 tracking-tight">
-                        Only Complete Course On <br className="hidden md:block" /> 
-                        <span className="text-brand-primary italic">AI in Interior Design and Architecture</span>
-                    </h3>
-                    <div className="relative w-full aspect-video max-w-[900px] mx-auto">
-                        <div className="absolute inset-0 bg-brand-primary/5 blur-[100px] rounded-full"></div>
-                        <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] border-4 border-white bg-black relative">
-                            <iframe 
-                                src="https://iframe.mediadelivery.net/embed/494628/a8b8b480-201f-4099-ac67-2a42b9a1b61c?muted=true" 
-                                className="w-full h-full object-cover" 
-                                allow="autoplay; fullscreen"
-                                loading="lazy"
-                            ></iframe>
+                    <div className="w-full lg:w-1/2">
+                        <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 bg-gray-900">
+                            <iframe src="https://iframe.mediadelivery.net/embed/494628/3009186c-d8fe-400c-b1af-2787fdf042a1?autoplay=true&muted=true&loop=true" className="w-full h-full" allowFullScreen allow="autoplay; fullscreen"></iframe>
                         </div>
                     </div>
-                </div>
-                
-                {/* Showcase Image after CTA 2 */}
-                <div className="mt-24 w-full max-w-7xl mx-auto overflow-hidden rounded-[2rem] md:rounded-[3rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
-                    <img 
-                      src="https://d1yei2z3i6k35z.cloudfront.net/13138299/6863ec42ba9eb_c9b7d945b1b6e0b8415a.webp" 
-                      alt="Course Showcase" 
-                      className="w-full h-auto object-cover"
-                    />
-                </div>
+                 </div>
+                 <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
+                 </div>
             </div>
         </section>
 
-        {/* SECTION 4: REVERSE PSYCHOLOGY */}
-        <section className="py-24 bg-white relative overflow-hidden border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-4xl">
-                <div className="bg-red-50 rounded-[4rem] p-12 md:p-20 border-4 border-dashed border-red-200 text-center relative">
-                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-red-600 text-white px-5 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black uppercase tracking-widest shadow-2xl whitespace-nowrap text-[10px] md:text-sm">
-                        <AlertCircle className="inline mr-1.5" size={14} /> PLEASE READ CAREFULLY
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-900 mb-10 leading-tight">This is NOT for everyone.</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left mb-16">
-                        <div className="space-y-4">
-                            <h4 className="font-black text-red-600 uppercase tracking-widest text-sm">DO NOT JOIN IF:</h4>
-                            <ul className="space-y-3 text-gray-600 font-medium">
-                                <li className="flex gap-2"><XCircle className="text-red-400 shrink-0" size={18} /> You want a "magic button" with zero work.</li>
-                                <li className="flex gap-2"><XCircle className="text-red-400 shrink-0" size={18} /> You enjoy complaining about bad clients.</li>
-                                <li className="flex gap-2"><XCircle className="text-red-400 shrink-0" size={18} /> You aren't willing to practice for 15 days.</li>
-                            </ul>
-                        </div>
-                        <div className="space-y-4">
-                            <h4 className="font-black text-brand-success uppercase tracking-widest text-sm">JOIN ONLY IF:</h4>
-                            <ul className="space-y-3 text-gray-600 font-medium">
-                                <li className="flex gap-2"><CheckCircle className="text-brand-success shrink-0" size={18} /> You are hungry to dominate your market.</li>
-                                <li className="flex gap-2"><CheckCircle className="text-brand-success shrink-0" size={18} /> You want to master AI before everyone else.</li>
-                                <li className="flex gap-2"><CheckCircle className="text-brand-success shrink-0" size={18} /> You value your time more than $49.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div className="pt-12 sm:pt-6">
-                        <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="max-w-2xl" />
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* SECTION 5: LOSS AVERSION CALCULATOR */}
-        <section className="py-24 bg-gray-900 text-white overflow-hidden border-y border-white/5">
-            <div className="container mx-auto px-6 max-w-6xl">
-                <div className="flex flex-col md:flex-row gap-16 items-center">
-                    <div className="w-full md:w-1/2">
-                        <div className="inline-flex items-center gap-2 bg-brand-primary text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-8">
-                           <BarChart3 size={14} /> The Cost of Inaction
-                        </div>
-                        <h2 className="text-4xl md:text-5xl font-display font-bold mb-8 leading-tight">You are losing <span className="text-brand-primary">$3,400+</span> <br/> every single month.</h2>
-                        <p className="text-gray-400 text-lg mb-8 leading-relaxed">While you spend 10 hours on a single manual render, our students use <span className="text-white font-bold">AI Workflows</span> to finish 5 projects in that same time. </p>
-                    </div>
-                    <div className="w-full md:w-1/2 bg-white rounded-[3rem] p-10 text-gray-900 shadow-2xl relative">
-                        <div className="absolute -top-4 -right-4 bg-brand-success text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest rotate-6">Income Leak Detected</div>
-                        <h3 className="text-2xl font-bold mb-6 text-center">The Success Gap</h3>
-                        <div className="space-y-6 text-gray-500">
-                            <div className="flex gap-4">
-                                <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0"><XCircle className="text-red-500" /></div>
-                                <div><h4 className="font-bold text-gray-900">Average Designer</h4><p className="text-sm">Earns $15,000/yr. Works 60hrs/week. Always tired.</p></div>
-                            </div>
-                            <div className="flex gap-4 border-b border-gray-100 pb-6">
-                                <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0"><CheckCircle className="text-brand-success" /></div>
-                                <div><h4 className="font-bold text-gray-900">Avada Pro</h4><p className="text-sm">Earns $85,000/yr. Works 20hrs/week. Respected expert.</p></div>
-                            </div>
-                            <div className="text-[10px] font-bold text-center uppercase tracking-widest pt-2">Claim the lifetime discount below</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* INTERMEDIATE MASTER CTA */}
-        <div className="bg-white py-16 flex justify-center container mx-auto px-6">
-            <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="max-w-2xl" />
-        </div>
-
-        {/* SECTION 6: VALUE STACK */}
-        <section className="py-24 bg-white border-b border-gray-100">
-            <div className="container mx-auto px-6 max-w-6xl">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 tracking-tight">The Total Value</h2>
-                    <p className="text-gray-500 text-xl font-medium max-w-2xl mx-auto">This isn't just a course. It's an entire design business downloaded to your computer.</p>
-                </div>
-                <div className="flex flex-wrap justify-center gap-6 mb-16">
-                    {[
-                        { t: "6 Master Courses", d: "Lifetime access to every lesson.", v: "$1,499", i: <Rocket className="text-brand-primary" /> },
-                        { t: "Weekly Live AI Classes", d: "New AI workflows every week.", v: "$999", i: <Radio className="text-brand-primary" /> },
-                        { t: "10,000+ Pro Textures", d: "4K resolution assets.", v: "$299", i: <Gem className="text-brand-primary" /> },
-                        { t: "AI Prompt Library", d: "Copy-paste viral ideas.", v: "$199", i: <Sparkles className="text-brand-primary" /> },
-                        { t: "Project Source Files", d: "Ready-to-use templates.", v: "$499", i: <Briefcase className="text-brand-primary" /> }
-                    ].map((item, i) => (
-                        <div key={i} className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 flex flex-col items-center text-center w-full sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)]">
-                             <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm">{item.i}</div>
-                             <h4 className="font-bold text-lg mb-2">{item.t}</h4>
-                             <p className="text-sm text-gray-500 mb-4">{item.d}</p>
-                             <span className="text-xs font-black text-brand-primary uppercase tracking-widest bg-brand-primary/10 px-3 py-1 rounded-full">{item.v} Value</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-
-        {/* SECTION 7: STACKED CAROUSEL */}
-        <section className="py-12 bg-gray-50 overflow-hidden border-b border-gray-100">
+        {/* CAROUSEL */}
+        <section className="py-24 bg-white overflow-hidden">
             <StackedCarousel onCourseClick={openCourseModal} />
         </section>
 
-        {/* NEW INFOGRAPHIC SECTION */}
-        <section className="bg-gray-50 py-16">
-            <div className="container mx-auto px-6 max-w-7xl">
-                <div className="w-full overflow-hidden rounded-[2rem] md:rounded-[3rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] border border-gray-100 bg-white">
-                    <img 
-                      src="https://d1yei2z3i6k35z.cloudfront.net/13138299/68654971c890d_Your-Numbered-Points-Title-Comes-Right-Here-9-min3.png" 
-                      alt="Program Features Infographic" 
-                      className="w-full h-auto object-cover"
-                    />
+        {/* TESTIMONIALS (4 CARDS) */}
+        <section className="py-24 bg-[#FCFCFD] overflow-hidden border-y border-gray-100">
+            <div className="container mx-auto px-6 max-w-6xl">
+                <div className="text-center mb-16">
+                    <Quote className="text-brand-primary mx-auto mb-6 opacity-20" size={64} />
+                    <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 tracking-tighter">Results from the Trenches.</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                    {TESTIMONIALS.map((t, i) => (
+                        <div key={i} className="p-10 bg-white rounded-[3rem] border border-gray-100 relative group hover:border-brand-primary transition-all duration-500 shadow-sm">
+                             <div className="flex gap-1 mb-6">
+                                {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-yellow-400 text-yellow-400" />)}
+                             </div>
+                             <p className="text-xl font-medium text-gray-700 leading-relaxed mb-8 italic">"{t.content}"</p>
+                             <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-900">{t.name.charAt(0)}</div>
+                                 <div>
+                                     <div className="font-bold text-gray-900">{t.name}</div>
+                                     <div className="text-xs text-gray-400 font-bold uppercase tracking-widest">{t.role} • {t.location}</div>
+                                 </div>
+                             </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
                 </div>
             </div>
         </section>
 
-        {/* SECTION 8: TESTIMONIALS (RENAMED TO STUDENT REVIEWS) */}
-        <section className="py-24 bg-gray-50">
-          <div className="px-6 md:px-12 mb-12 flex flex-col items-center text-center">
-            <div className="flex items-center gap-1 mb-4">
-              {[1,2,3,4,5].map(i => <Star key={i} size={20} className="fill-yellow-400 text-yellow-400"/>)}
-            </div>
-            <h2 className="text-4xl font-display font-bold text-gray-900 mb-2">Student Reviews</h2>
-            <p className="text-gray-500">41,258 students and counting.</p>
-          </div>
-          <div className="overflow-x-auto pb-12 px-6 md:px-12 flex gap-6 no-scrollbar">
-            {TESTIMONIALS.map((t, i) => (
-              <GlassCard key={i} className="min-w-[320px] md:min-w-[420px] p-10" hoverEffect={true}>
-                <Quote size={40} className="text-brand-primary/10 absolute top-6 right-6" />
-                <p className="text-gray-700 italic mb-8 leading-relaxed text-lg font-medium">"{t.content}"</p>
-                <div className="flex items-center gap-4 border-t border-gray-100 pt-8">
-                  <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-900 text-xl border-2 border-brand-primary/10 shadow-sm">{t.name[0]}</div>
-                  <div className="text-left">
-                    <div className="font-bold text-gray-900 text-lg">{t.name}</div>
-                    <div className="text-xs text-gray-400 font-bold uppercase tracking-widest">{t.role} • {t.location}</div>
-                  </div>
+        {/* FAQ */}
+        <section className="py-24 bg-white border-b border-gray-100">
+            <div className="container mx-auto px-6 max-w-3xl">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 tracking-tighter">Answering your doubts.</h2>
                 </div>
-              </GlassCard>
-            ))}
-          </div>
+                <div className="bg-gray-50 p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-xl mb-12">
+                    {FAQ_ITEMS.map((item, i) => (
+                        <FAQAccordion key={i} question={item.question} answer={item.answer} />
+                    ))}
+                </div>
+                <div className="flex justify-center">
+                    <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl" />
+                </div>
+            </div>
         </section>
 
-        {/* SECTION 9: FAQ */}
-        <section className="py-24 px-6 md:px-12 max-w-4xl mx-auto border-b border-gray-100">
-          <div className="text-center mb-16"><h2 className="text-4xl font-display font-bold mb-4 text-gray-900">FAQ</h2><p className="text-gray-500 text-lg">Common questions from future pros.</p></div>
-          <div className="space-y-4">{FAQ_ITEMS.map((item, index) => (<div key={index} className="bg-white rounded-3xl border border-gray-100 overflow-hidden transition-all hover:shadow-lg"><button onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)} className="w-full flex items-center justify-between p-8 text-left group"><span className="text-lg font-bold text-gray-900 group-hover:text-brand-primary transition-colors">{item.question}</span><ChevronDown size={20} className={`text-gray-400 transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`} /></button><div className={`px-8 transition-all duration-300 overflow-hidden ${openFaqIndex === index ? 'max-h-[500px] pb-8 opacity-100' : 'max-h-0 opacity-0'}`}><p className="text-gray-600 font-medium leading-relaxed">{item.answer}</p></div></div>))}</div>
-        </section>
-
-        {/* SECTION 10: FINAL CONVERSION */}
-        <section className="py-32 bg-gray-900 text-white text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-brand-primary/5 blur-[120px] rounded-full animate-pulse"></div>
+        {/* FINAL CTA */}
+        <section className="py-40 bg-gray-900 text-white text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-brand-primary/10 blur-[150px] rounded-full"></div>
             <div className="container mx-auto px-6 relative z-10">
-                <h2 className="text-5xl md:text-7xl font-display font-bold mb-8">Your future self is <br/> <span className="text-brand-primary">waiting for you.</span></h2>
-                <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">In 15 days, your renders could be the talk of the industry. Or you could stay where you are. The choice is yours.</p>
-                
-                {/* Fixed Visibility here with theme="dark" */}
-                <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} theme="dark" className="max-w-2xl bg-white/5 p-8 rounded-[3rem] border border-white/10 backdrop-blur-md" />
+                <h2 className="text-6xl md:text-8xl font-display font-bold mb-10 tracking-tighter">Admit it. <br/> <span className="text-brand-primary italic">You're curious.</span></h2>
+                <div className="max-w-xl mx-auto">
+                   <MasterCTA onClick={openGeneralModal} timeLeft={timeLeft} className="bg-white p-10 rounded-[3rem] border border-white/10" />
+                </div>
             </div>
         </section>
       </main>
 
-      <footer className="bg-black py-16 px-6 text-center border-t border-white/5">
-        <div className="flex justify-center mb-8 grayscale invert opacity-50"><Logo /></div>
-        <p className="text-[10px] text-gray-700 uppercase tracking-[0.2em]">© 2026 Avada Architectural AI. No more excuses.</p>
+      <footer className="bg-white py-20 px-6 text-center border-t border-gray-100">
+        <div className="flex justify-center mb-10 grayscale opacity-40"><Logo /></div>
+        <p className="text-[10px] text-gray-400 uppercase tracking-[0.4em]">© 2026 AVADA ARCHITECTURAL AI • ADAPT OR EXPIRE</p>
       </footer>
 
       <PaymentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialCourse={selectedCourse} />
-      <AdminModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );

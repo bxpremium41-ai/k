@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Feature, Testimonial, FaqItem, PricingPlan } from './types';
 import { Download, MonitorPlay, Infinity, LifeBuoy, Users } from 'lucide-react';
@@ -8,170 +9,149 @@ import { Download, MonitorPlay, Infinity, LifeBuoy, Users } from 'lucide-react';
   1. Upload your image to Google Drive.
   2. Right click -> Share -> Copy Link (Ensure access is "Anyone with the link").
   3. Paste the link into the 'imageUrl' field below.
-  
-  The code will automatically convert Google Drive links to work on the website.
   -----------------------------------------------------------------------
 */
 
 const RAW_COURSES: Course[] = [
   {
     id: '1',
-    title: 'AutoCAD Mastery',
+    title: 'AutoCAD Foundations',
     software: 'AutoCAD',
-    description: 'The starting point for every architect. Learn to draw accurate 2D floor plans for houses and buildings.',
+    description: 'The "Bones" of your workflow. Master precision technical drawing so your AI renders have accurate proportions and construction feasibility.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1fV5bz4JDugh8HxLMJ0fXu5K5sDj3qlSR',
     color: 'from-red-500 to-red-400',
     students: '42.5k',
     learningPoints: [
-      'Draw floor plans and furniture layouts easily',
-      'Print your drawings to scale for construction',
-      'Use shortcuts to draw 10x faster than others'
+      'Industry-standard technical drafting',
+      'Construction-ready floor plans',
+      'Pro shortcuts for extreme drafting speed'
     ],
-    workflowImpact: 'Stop drawing by hand. Create professional blueprints that contractors can actually build from.'
+    workflowImpact: 'The essential foundation. No AI can fix a bad floor plan.'
   },
   {
     id: '3',
-    title: 'SketchUp Pro',
+    title: 'SketchUp Expert Modeling',
     software: 'SketchUp',
-    description: 'The easiest way to design 3D houses. If you can draw a box, you can design a beautiful villa with this.',
+    description: 'The "Body" of your project. Learn to model complex geometry that serves as the perfect canvas for high-speed AI texturing and lighting.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1wl6by5AO5MiPeoYsZ8F6Zi5AJahoeTQo', 
     color: 'from-blue-500 to-cyan-400',
     students: '55k',
     learningPoints: [
-      'Pull simple shapes into 3D houses instantly',
-      'Add furniture, colors, and textures easily',
-      'Create 3D views to show your clients'
+      'Complex 3D spatial modeling',
+      'Organized layering for render engines',
+      'Asset management and studio workflows'
     ],
-    workflowImpact: 'Impress clients instantly. Model their dream kitchen or bedroom in front of them in just minutes.'
+    workflowImpact: 'Rapid modeling that feeds your AI rendering engine.'
   },
   {
     id: '5',
-    title: 'V-Ray Photorealism',
+    title: 'V-Ray Reality Mastery',
     software: 'V-Ray',
-    description: 'Make your 3D models look like real photos. Lighting and shadows so good, clients will think it is built.',
+    description: 'The "Skin" of your design. Transition from basic 3D to hyper-realistic photography. Essential for high-ticket commercial clients.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1aHEt_z78tYD_0Cn66DiduAnhwn-o8El8',
     color: 'from-yellow-500 to-orange-400',
     students: '48k',
     learningPoints: [
-      'Set up realistic sunlight and night lighting',
-      'Make materials look like real wood and glass',
-      'Take "photographs" of your 3D house'
+      'Photorealistic material science',
+      'Advanced global illumination',
+      'Professional post-production'
     ],
-    workflowImpact: 'Sell your design before it exists. Clients pay faster when they see exactly what they are getting.'
+    workflowImpact: 'Close premium clients with 8K "photographs" of their dreams.'
   },
   {
     id: '6',
-    title: 'Lumion Cinematic',
+    title: 'Lumion Cinematic Tours',
     software: 'Lumion',
-    description: 'Make movies of your architecture. Add moving people, birds, and cars to make your design feel alive.',
+    description: 'The "Movement" of your design. Create immersive video tours that explain complex designs in seconds.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1XW2DDHVa1Qc15NcZ3wUKMFRT7LkyZMCt',
     color: 'from-teal-500 to-emerald-400',
     students: '31k',
     learningPoints: [
-      'Add grass, trees, and water instantly',
-      'Make people walk and cars drive in your scene',
-      'Create a video tour of the house'
+      'Cinematic camera movements',
+      'Dynamic weather and lighting effects',
+      'Professional architectural storytelling'
     ],
-    workflowImpact: 'Give your client a video tour. A 1-minute video sells a house better than 100 drawings.'
+    workflowImpact: 'A 60-second video tour beats a 100-page presentation.'
   },
   {
     id: '7',
-    title: 'D5 Render Realtime',
+    title: 'D5 Real-Time Rendering',
     software: 'D5 Render',
-    description: 'See the final result instantly while you work. No more waiting hours for the computer to finish a picture.',
+    description: 'The "Speed" of your design. See final quality as you work. No more waiting hours for images to "finish".',
     imageUrl: 'https://lh3.googleusercontent.com/d/1vbV4j6K9sgzbbZ7qlRdgqPTXWiHBPLsr',
     color: 'from-purple-500 to-pink-500',
     students: '19k',
     learningPoints: [
-      'Real-time lighting (see it as you work)',
-      'Drag and drop thousands of free furniture items',
-      'Make 4K images in seconds'
+      'Instant RTX-powered lighting',
+      'Real-time material editing',
+      'High-speed final exports'
     ],
-    workflowImpact: 'Design faster. Change the floor material and see how it looks instantly without waiting.'
+    workflowImpact: 'Iterate 10x faster and finish projects on the same day.'
   },
   {
     id: '9',
-    title: 'AI Architecture & Gen Design',
-    software: 'Midjourney + SD',
-    description: 'The ultimate AI workflow. Generate concepts in seconds with Midjourney and turn rough sketches into renders with Stable Diffusion.',
+    title: 'AI Gen-Design & Prompting',
+    software: 'AI Architecture',
+    description: 'The "Superpower". Use Stable Diffusion and Midjourney to turn Phase 1 sketches into professional renders in under 60 seconds.',
     imageUrl: 'https://lh3.googleusercontent.com/d/1s-HzZVKpc9F92mLW2gMOPk0kVrKAqUIS',
     color: 'from-fuchsia-600 to-purple-600',
     students: '75k',
     learningPoints: [
-      'Master Midjourney for instant high-end concepts',
-      'Turn rough sketches into realistic renders (Stable Diffusion)',
-      'Train your own AI models on your style'
+      'Midjourney for architectural concepting',
+      'Stable Diffusion for render-to-render control',
+      'AI Prompt Engineering for Design'
     ],
-    workflowImpact: 'Never run out of ideas. Let AI generate the creative concepts so you can focus on the details.'
+    workflowImpact: 'The future of our industry. Work at the speed of thought.'
   }
 ];
 
 export const COURSES = RAW_COURSES;
 
-export const ROWS = [
-  { 
-    title: "Essential Fundamentals", 
-    courses: [
-      COURSES.find(c => c.software === 'AutoCAD')!,
-      COURSES.find(c => c.software === 'SketchUp')!
-    ] 
+export const FEATURES: Feature[] = [
+  {
+    icon: <MonitorPlay />,
+    title: '70+ Hours of Content',
+    description: 'Master every software from foundations to advanced AI-driven architectural rendering.'
   },
-  { 
-    title: "High-End Rendering", 
-    courses: [
-      COURSES.find(c => c.software === 'V-Ray')!,
-      COURSES.find(c => c.software === 'Lumion')!,
-      COURSES.find(c => c.software === 'D5 Render')!
-    ] 
+  {
+    icon: <Infinity />,
+    title: 'Lifetime Access',
+    description: 'One-time payment. No subscriptions. Get every future update and 2026 AI modules for free.'
   },
-  { 
-    title: "The AI Revolution", 
-    courses: [
-      COURSES.find(c => c.id === '9')! // Combined AI Course
-    ] 
+  {
+    icon: <Users />,
+    title: 'Private Community',
+    description: 'Join 41k+ designers in our private Discord to network, share prompts, and get feedback.'
+  },
+  {
+    icon: <Download />,
+    title: '10,000+ Assets',
+    description: 'Instant access to our premium library of high-quality textures, models, and AI prompt templates.'
+  },
+  {
+    icon: <LifeBuoy />,
+    title: 'Expert Support',
+    description: 'Get direct answers to your technical questions from our team of industry professionals.'
   }
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'lifetime-all-access',
-    duration: 'Lifetime All-Access',
+    duration: 'Full Hybrid Bundle',
     period: 'One-time investment',
     price: '$49',
     originalPrice: '$99',
-    label: 'BEST VALUE',
+    label: '41k+ ENROLLED',
     features: [
-      'Access to all 6 courses instantly', 
-      'Lifetime Future Updates included', 
-      'All Future AI Modules included',
-      'The Pro Asset Library (10,000+ items)', 
-      'Official Student ID & Certification',
-      'Direct Business Mentorship Access'
+      'All 6 Professional Courses',
+      'Phase 1 Foundations (AutoCAD/SketchUp)',
+      'Phase 2 AI & Rendering Superpowers',
+      'Lifetime Updates (2026 Ready)',
+      'Certified Digital Diploma',
+      'Private Support Discord'
     ],
     accentColor: 'border-brand-success shadow-glow-success'
-  }
-];
-
-export const FEATURES: Feature[] = [
-  {
-    icon: <Download className="w-8 h-8" />,
-    title: 'Instant Download',
-    description: 'Get all source files and project templates immediately.',
-  },
-  {
-    icon: <Infinity className="w-8 h-8" />,
-    title: 'Zero Expiry',
-    description: 'Learn at your own pace. Your access never expires.',
-  },
-  {
-    icon: <MonitorPlay className="w-8 h-8" />,
-    title: 'Elite Quality',
-    description: '4K lessons filmed in professional architecture studios.',
-  },
-  {
-    icon: <LifeBuoy className="w-8 h-8" />,
-    title: 'Personalized Support',
-    description: 'Got a bug? Our mentors reply in under 15 minutes.',
   }
 ];
 
@@ -180,41 +160,39 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Sarah Jenkins',
     role: 'Freelance Architect',
     location: 'London, UK',
-    content: 'Before this, I was charging $200 for a render. After applying the AI workflow, I just closed a $3,500 contract for a luxury penthouse tour.'
+    content: 'The AutoCAD to AI pipeline is genius. I reduced my rendering time from 12 hours to 10 minutes without losing blueprint precision.'
   },
   {
     name: 'Michael Chen',
     role: 'Studio Founder',
     location: 'Toronto, Canada',
-    content: 'The D5 and Midjourney combo changed my firm’s output overnight. We are now delivering 3x faster without hiring more staff.'
+    content: 'The Hybrid Workflow is the only way we stayed profitable this year. My team is 5x faster than our competitors.'
   },
   {
-    name: 'Elena Rodriguez',
-    role: 'Student',
-    location: 'Madrid, Spain',
-    content: 'I learned more in 2 weeks here than 3 years in architecture school. The Revit modules are incredibly practical.'
+    name: 'David Rossi',
+    role: 'Senior Designer',
+    location: 'Milan, Italy',
+    content: 'I thought AutoCAD was enough until I saw what AI could do. Now I deliver in a day what used to take me a month. Best $49 I ever spent.'
+  },
+  {
+    name: 'Amara Okafor',
+    role: '3D Visualizer',
+    location: 'Lagos, Nigeria',
+    content: 'The software installation guides saved me days of frustration. Everything is working perfectly and the Discord community is elite.'
   }
 ];
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
+    question: "Why do I need AutoCAD if I have AI?",
+    answer: "AI generates images, not blueprints. Clients need blueprinters. We teach you how to use AutoCAD to create the 'Bones' and AI to create the 'Soul'. One is useless without the other."
+  },
+  {
     question: "Is this really just a one-time payment?",
-    answer: "Yes. We hate monthly subscriptions as much as you do. You pay $49 once, and you own everything forever, including all the AI courses we release next month, next year, and beyond."
+    answer: "Yes. $49 once. No monthly taxes on your career. You get every course and every future update forever."
   },
   {
-    question: "What if I'm a complete beginner?",
-    answer: "Perfect. We start with 'Level 0' basics for AutoCAD and SketchUp. Within 7 days, you'll be moving to the AI modules. Our system is built to take you from 'Zero to Studio-Ready' in 15 days."
-  },
-  {
-    question: "Do I get certificates for my LinkedIn?",
-    answer: "Yes. You receive a verified certificate for each course path you complete, plus an 'Elite Full-Stack Master' diploma if you complete the entire library."
-  },
-  {
-    question: "What about software? Do you provide them?",
-    answer: "We provide official direct download links for all student versions and trials. We also have a 24/7 technical team that can hop on a call to help you install everything properly."
-  },
-  {
-    question: "What's the 30-Day Guarantee?",
-    answer: "If you watch the lessons and don't feel like your rendering skills have improved 10x, just message us. We'll give you a full refund, no questions asked. We're that confident in the system."
+    question: "How long until I see results?",
+    answer: "If you follow the 15-day roadmap, you will deliver your first AI-Hybrid render by Day 9."
   }
 ];
