@@ -699,9 +699,26 @@ const App: React.FC = () => {
       </footer>
 
       {/* ─── STICKY MOBILE CTA ─── */}
-      <div className={`fixed bottom-0 left-0 right-0 z-40 md:hidden bg-surface-1/95 backdrop-blur-xl border-t border-white/10 p-4 sticky-cta-bar ${showStickyBar ? 'visible' : ''}`}>
-        <button onClick={openGeneralModal} className="w-full cta-gradient text-white py-4 rounded-xl font-black text-lg uppercase tracking-widest flex items-center justify-center gap-3 active:scale-[0.98] transition-transform shadow-glow">
-          Download Courses $49 <ArrowRight size={20} />
+      <div className={`fixed bottom-0 left-0 right-0 z-40 md:hidden bg-surface-1/90 backdrop-blur-xl border-t border-white/10 p-2 transition-transform duration-300 ${showStickyBar ? 'translate-y-0' : 'translate-y-full'}`}>
+        <button onClick={openGeneralModal} className="w-full relative group overflow-hidden bg-brand-primary text-white rounded-xl shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all h-14 flex items-center px-4">
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-accent/20 to-brand-primary"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg] animate-[shine_3s_infinite]"></div>
+
+          <div className="relative z-10 w-full flex items-center justify-between">
+            <div className="flex flex-col items-start leading-none gap-0.5">
+              <span className="text-[9px] font-black uppercase tracking-widest text-yellow-300 animate-pulse drop-shadow-md">
+                ENDS {String(timeLeft.h).padStart(2, '0')}:{String(timeLeft.m).padStart(2, '0')}:{String(timeLeft.s).padStart(2, '0')}
+              </span>
+              <span className="text-sm font-black uppercase tracking-[0.15em] text-white">
+                Download Now
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-red-300 line-through opacity-80">$99</span>
+              <span className="text-xl font-display font-black text-white">$49</span>
+            </div>
+          </div>
         </button>
       </div>
 

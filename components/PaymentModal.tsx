@@ -337,8 +337,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
                     {/* Footer Button */}
                     {(viewState === 'FORM' || viewState === 'PROCESSING') && paymentMethod === 'card' && (
                         <div className="p-6 md:p-8 border-t border-gray-100 bg-white shrink-0">
-                            <button onClick={handleCardPay} disabled={viewState === 'PROCESSING'} className="w-full py-4 bg-brand-primary text-white rounded-xl font-black text-lg uppercase tracking-[0.2em] shadow-glow hover:shadow-glow-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
-                                {viewState === 'PROCESSING' ? <Loader2 className="animate-spin" /> : <><Download size={20} /> Download Courses • $49 <ArrowRight size={20} /></>}
+                            <button onClick={handleCardPay} disabled={viewState === 'PROCESSING'} className="w-full py-3 sm:py-4 bg-brand-primary text-white rounded-xl font-black text-sm sm:text-lg uppercase tracking-widest sm:tracking-[0.2em] shadow-glow hover:shadow-glow-lg flex items-center justify-center gap-2 sm:gap-3 transition-all active:scale-[0.98]">
+                                {viewState === 'PROCESSING' ? <Loader2 className="animate-spin" /> : <><Download size={18} className="sm:w-5 sm:h-5" /> Download Courses • $49</>}
                             </button>
                             <p className="text-center text-[10px] text-red-500 font-bold mt-3 uppercase tracking-widest">⚠ Price increases to $99 when timer hits zero</p>
                             <div className="flex items-center justify-center gap-4 mt-4 opacity-50">
